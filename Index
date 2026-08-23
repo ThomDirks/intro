@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Intro — name the track from a fraction of a second</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2EFE9;
+  --surface:#FFFFFF;
+  --surface-2:#F7F5F1;
+  --line:rgba(23,22,15,.09);
+  --line-2:rgba(23,22,15,.16);
+  --ink:#16150F;
+  --ink-2:#6B665C;
+  --ink-3:#9B968B;
+  --accent:#DC4A1E;
+  --green:#4C7A3F;
+  --r-lg:26px; --r-md:18px; --r-sm:13px;
+  --shadow:0 1px 2px rgba(23,22,15,.05), 0 10px 30px -12px rgba(23,22,15,.16);
+  --font:'Archivo',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;
+  display:flex;justify-content:center;padding:22px 16px 60px;min-height:100vh;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(120% 70% at 50% -10%, rgba(255,255,255,.85), transparent 60%);
+}
+.shell{width:100%;max-width:560px}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+a{color:var(--ink)}
+code{font-family:var(--mono);font-size:.88em;background:var(--surface-2);padding:2px 5px;border-radius:5px}
+
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.card{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:22px;margin-bottom:12px}
+.card h2{font-size:20px;font-weight:700;letter-spacing:-.022em;margin-bottom:5px}
+.card .sub{font-size:14px;color:var(--ink-2);margin-bottom:18px;line-height:1.5}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-size:15px;font-weight:600;letter-spacing:-.01em;padding:13px 22px;border-radius:999px;
+  background:var(--surface-2);color:var(--ink);transition:transform .12s ease,background .15s ease,opacity .15s ease}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:hover:not(:disabled){background:#EDEAE4}
+.btn:disabled{opacity:.35}
+.btn-primary{background:var(--ink);color:#fff}
+.btn-primary:hover:not(:disabled){background:#2C2A20}
+.btn-wide{width:100%}
+.btn-sm{font-size:13px;padding:10px 16px}
+
+input[type=text],textarea{width:100%;font-family:var(--font);font-size:16px;padding:14px 16px;
+  border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--surface-2);color:var(--ink);transition:border-color .15s ease}
+input[type=text]:focus,textarea:focus{outline:none;border-color:var(--ink);background:#fff}
+textarea{min-height:150px;resize:vertical;font-family:var(--mono);font-size:14px;line-height:1.75}
+::placeholder{color:var(--ink-3)}
+.field{margin-bottom:12px}
+.field label{display:block;margin-bottom:6px}
+
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;padding:0 4px}
+.wordmark{font-weight:800;font-size:27px;letter-spacing:-.04em;line-height:1}
+.wordmark .dot{color:var(--accent)}
+
+/* ---- home tiles ---- */
+.tile{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px 18px;
+  background:var(--surface);border-radius:var(--r-md);margin-bottom:9px;box-shadow:var(--shadow);
+  transition:transform .12s ease,background .15s ease}
+.tile:hover{background:#FCFBF9}
+.tile:active{transform:scale(.985)}
+.tile .glyph{width:44px;height:44px;border-radius:13px;flex-shrink:0;display:grid;place-items:center;
+  font-size:19px;background:var(--surface-2)}
+.tile .tt{flex:1;min-width:0}
+.tile h3{font-size:15.5px;font-weight:600;letter-spacing:-.012em}
+.tile p{font-size:13px;color:var(--ink-2);line-height:1.45;margin-top:1px}
+.tile .chev{color:var(--ink-3);font-size:19px;flex-shrink:0}
+.sect-label{margin:20px 4px 9px}
+
+/* ---- lists ---- */
+.list{background:var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow);overflow:hidden;max-height:330px;overflow-y:auto}
+.list-item{display:flex;justify-content:space-between;gap:12px;align-items:center;width:100%;
+  padding:13px 17px;text-align:left;font-size:14.5px;border-bottom:1px solid var(--line)}
+.list-item:last-child{border-bottom:none}
+.list-item:hover{background:var(--surface-2)}
+.list-item .n{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);flex-shrink:0}
+.list-item.dim{opacity:.35;cursor:not-allowed}
+.list-item.dim:hover{background:transparent}
+
+/* ---- segmented ---- */
+.seg{display:flex;gap:5px;background:var(--surface-2);padding:5px;border-radius:14px;margin-bottom:14px}
+.seg button{flex:1;padding:10px 6px;border-radius:10px;font-size:13.5px;font-weight:600;letter-spacing:-.01em;
+  color:var(--ink-2);transition:background .15s ease,color .15s ease}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(23,22,15,.12)}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.chip{padding:9px 14px;border-radius:999px;font-family:var(--mono);font-size:12.5px;
+  background:var(--surface-2);color:var(--ink-3);border:1px solid transparent;transition:all .15s ease}
+.chip.on{background:var(--ink);color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.leg{display:flex;align-items:baseline;gap:5px;padding:5px 10px;border-radius:9px;background:var(--surface-2)}
+.leg .ll{font-family:var(--mono);font-size:11.5px;color:var(--ink)}
+.leg .lp{font-size:11px;color:var(--ink-3)}
+.h2h-col .ts{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin:-6px 0 8px}
+.names{display:flex;gap:9px;margin-top:9px}
+.names input{flex:1}
+.hint{font-size:12.5px;color:var(--ink-3);margin-top:9px;line-height:1.5}
+
+.status{font-size:13.5px;margin-top:12px;padding:11px 14px;border-radius:var(--r-sm);line-height:1.55}
+.status.err{background:rgba(220,74,30,.09);color:#9A3315}
+.status.ok{background:rgba(76,122,63,.11);color:#365828}
+.status.wait{background:var(--surface-2);color:var(--ink-2)}
+.status:empty{display:none}
+.textlink{font-size:13.5px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+.textlink:hover{color:var(--ink)}
+.copyrow{display:flex;gap:8px}
+.copyrow input{flex:1;font-family:var(--mono);font-size:13px}
+
+/* ================= GAME ================= */
+.stage-card{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);
+  padding:20px 22px 26px;margin-bottom:11px;text-align:center;position:relative;overflow:hidden}
+.stage-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:4px}
+.stage-head .src{font-size:13px;font-weight:600;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stage-head .pos{font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+
+.player{position:relative;width:172px;height:172px;margin:14px auto 0}
+.ring{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:5;stroke-linecap:round}
+.ring .bg{stroke:var(--line)}
+.ring .fg{stroke:var(--accent);transition:stroke-dashoffset .05s linear}
+.play-circle{position:absolute;inset:16px;border-radius:50%;background:var(--ink);color:#fff;
+  display:grid;place-items:center;transition:transform .14s cubic-bezier(.3,1.4,.5,1),background .15s ease}
+.play-circle:hover:not(:disabled){background:#2C2A20}
+.play-circle:active:not(:disabled){transform:scale(.94)}
+.play-circle:disabled{background:var(--line-2)}
+.play-circle .ico{width:0;height:0;border-left:30px solid currentColor;border-top:19px solid transparent;
+  border-bottom:19px solid transparent;margin-left:8px}
+.play-circle.on .ico{border:none;width:26px;height:26px;border-radius:4px;background:currentColor;margin:0}
+
+.clip-len{font-size:31px;font-weight:700;letter-spacing:-.03em;margin-top:18px;font-variant-numeric:tabular-nums}
+.clip-cap{font-size:12.5px;color:var(--ink-3);margin-top:1px}
+.pills{display:flex;justify-content:center;gap:6px;margin-top:17px;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:10.5px;padding:5px 10px;border-radius:999px;
+  background:var(--surface-2);color:var(--ink-3)}
+.pill.past{background:rgba(23,22,15,.1);color:var(--ink-2)}
+.pill.now{background:var(--accent);color:#fff}
+
+.attempts{display:grid;gap:6px;margin-bottom:11px}
+.att{display:flex;align-items:center;gap:11px;padding:12px 15px;border-radius:var(--r-sm);
+  background:var(--surface);box-shadow:0 1px 2px rgba(23,22,15,.05);min-height:46px;font-size:14.5px}
+.att.empty{background:transparent;box-shadow:none;border:1px dashed var(--line-2)}
+.att .m{width:17px;flex-shrink:0;font-size:13px;color:var(--ink-3);text-align:center}
+.att .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att.wrong .m{color:var(--accent)}
+.att.wrong .t{color:var(--ink-2)}
+.att.skip .t{color:var(--ink-3);font-style:italic}
+.att.correct{background:rgba(76,122,63,.11);box-shadow:none}
+.att.correct .m{color:var(--green)}
+
+.guess-wrap{position:relative}
+.suggest{position:absolute;bottom:calc(100% + 7px);left:0;right:0;max-height:250px;overflow-y:auto;z-index:30;
+  background:var(--surface);border-radius:var(--r-md);box-shadow:0 4px 30px rgba(23,22,15,.19);display:none;padding:5px}
+.suggest.open{display:block}
+.suggest li{list-style:none;padding:11px 13px;font-size:14.5px;cursor:pointer;border-radius:10px;line-height:1.3}
+.suggest li .a{color:var(--ink-3);font-size:12.5px;display:block}
+.suggest li.hi{background:var(--ink);color:#fff}
+.suggest li.hi .a{color:rgba(255,255,255,.65)}
+.suggest .none{padding:13px;font-size:13.5px;color:var(--ink-3);cursor:default}
+.acts{display:flex;gap:8px;margin-top:9px}
+.acts .btn{flex:1}
+
+/* reveal */
+.reveal{text-align:center;padding:24px 22px 22px}
+.verdict{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-bottom:15px}
+.verdict.win{color:var(--green)}
+.verdict.lose{color:var(--accent)}
+.art{width:132px;height:132px;border-radius:16px;margin:0 auto 15px;display:block;background:var(--surface-2);
+  object-fit:cover;box-shadow:0 6px 22px -6px rgba(23,22,15,.35)}
+.reveal h3{font-size:21px;font-weight:700;letter-spacing:-.024em;line-height:1.22}
+.reveal .by{color:var(--ink-2);font-size:15px;margin-top:3px}
+.sq{font-size:17px;letter-spacing:3px;margin:16px 0 2px}
+.link-out{display:inline-block;margin-top:11px;font-size:13px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+
+.bigscore{font-size:52px;font-weight:800;letter-spacing:-.045em;line-height:1;margin:8px 0 2px;font-variant-numeric:tabular-nums}
+.bigscore small{font-size:20px;font-weight:600;color:var(--ink-3);letter-spacing:-.02em}
+.tally{margin-top:20px;text-align:left}
+.tally-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
+.tally-row .s{font-size:12px;letter-spacing:2px;flex-shrink:0}
+.tally-row .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tally-row .pt{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);flex-shrink:0}
+.h2h{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;text-align:left}
+.h2h-col{border-radius:var(--r-md);padding:15px;background:var(--surface-2)}
+.h2h-col.win{background:rgba(76,122,63,.13)}
+.h2h-col h4{font-size:14.5px;font-weight:600}
+.h2h-col .t{font-size:23px;font-weight:700;letter-spacing:-.03em;margin:3px 0 8px;font-variant-numeric:tabular-nums}
+.h2h-col .s{font-size:11.5px;letter-spacing:2px;line-height:2}
+
+.pass{text-align:center;padding:44px 24px}
+.pass .who{font-size:31px;font-weight:800;letter-spacing:-.035em;margin-bottom:6px}
+.pass .sub{font-size:14.5px;color:var(--ink-2);margin-bottom:26px}
+.pass .clock{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:16px}
+
+.rail{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:2px 6px;flex-wrap:wrap}
+.rail .stats{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.04em}
+.rail button{font-size:13px;color:var(--ink-2)}
+.rail button:hover{color:var(--ink)}
+.rail .grp{display:flex;gap:14px}
+.notice{font-size:12.5px;line-height:1.6;color:var(--ink-2);background:var(--surface-2);
+  border-radius:var(--r-sm);padding:11px 14px;margin-top:12px}
+.hidden{display:none !important}
+
+.spin{display:inline-block;width:15px;height:15px;border:2px solid var(--line-2);border-top-color:var(--ink);
+  border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:480px){
+  .player{width:150px;height:150px}
+  .clip-len{font-size:27px}
+  .h2h{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="masthead">
+    <div class="wordmark">Intro<span class="dot">.</span></div>
+    <button class="btn btn-sm hidden" id="home-btn">Home</button>
+  </div>
+
+  <!-- ===== HOME ===== -->
+  <section id="s-home">
+    <div class="eyebrow sect-label">Choose your music</div>
+    <button class="tile" id="tile-spotify">
+      <span class="glyph">&#9835;</span>
+      <span class="tt"><h3>A Spotify playlist</h3><p>One-time setup on Spotify's side. Reads playlists you own.</p></span>
+      <span class="chev">&#8250;</span>
+    </button>
+    <button class="tile" id="tile-manual">
+      <span class="glyph">&#9997;</span>
+      <span class="tt"><h3>Paste a song list</h3><p>One <code>Artist - Title</code> per line. Works anywhere, no account.</p></span>
+      <span class="chev">&#8250;</span>
+    </button>
+
+    <div class="card hidden" id="manual-card" style="margin-top:12px">
+      <h2>Paste a song list</h2>
+      <p class="sub">One song per line as <code>Artist - Title</code>. A CSV export from a playlist tool also works &mdash; paste the whole thing, headers included, and the track and artist columns get picked up.</p>
+      <textarea id="manual-text" spellcheck="false" placeholder="Fleetwood Mac - Dreams&#10;Talking Heads - Once in a Lifetime&#10;Sade - Smooth Operator"></textarea>
+      <button class="btn btn-primary btn-wide" id="manual-go" style="margin-top:11px">Use this list</button>
+      <div class="status" id="manual-status"></div>
+    </div>
+  </section>
+
+  <!-- ===== SPOTIFY CONNECT ===== -->
+  <section id="s-connect" class="hidden">
+    <div class="card">
+      <h2>Connect Spotify</h2>
+      <p class="sub">Spotify requires each person to register their own app key. It takes about two minutes and you only do it once.</p>
+      <div class="field">
+        <label class="eyebrow" for="redir">1. Redirect URI &mdash; must match your dashboard character for character</label>
+        <div class="copyrow">
+          <input type="text" id="redir" spellcheck="false" autocomplete="off">
+          <button class="btn btn-sm" id="copy-redir">Copy</button>
+        </div>
+        <div class="hint" id="redir-warn"></div>
+      </div>
+      <div class="field">
+        <label class="eyebrow" for="cid">2. Paste your Client ID</label>
+        <input type="text" id="cid" autocomplete="off" spellcheck="false" placeholder="32 characters">
+      </div>
+      <button class="btn btn-primary btn-wide" id="connect-btn">Connect</button>
+      <div class="status" id="connect-status"></div>
+      <details style="margin-top:16px">
+        <summary>It says insecure or invalid redirect URI</summary>
+        <ul>
+          <li><b>Save this file as <code>index.html</code></b> and open <code>http://127.0.0.1:8080/</code>. Then the redirect is just the address with no filename, which is the shape Spotify's validator is happiest with.</li>
+          <li><b>Avoid hyphens in the path.</b> The dashboard's validator has a long-standing bug where a hyphen anywhere in the path of a loopback URI makes the Add button refuse to work. <code>intro-game.html</code> will not save; <code>index.html</code> will.</li>
+          <li><b>Never use <code>localhost</code>.</b> Spotify removed support for it in November 2025. Only the literal <code>127.0.0.1</code> works, and your browser must show 127.0.0.1 in the bar too.</li>
+          <li><b>Always include the port.</b> Bare <code>http://127.0.0.1</code> is rejected by the dashboard even though the docs say it should work.</li>
+          <li><b>The match is exact</b>, trailing slash included. If the dashboard only accepted a slightly different string, paste that exact string into the box above and the app will use it.</li>
+        </ul>
+      </details>
+      <details>
+        <summary>I would rather not run a local server</summary>
+        <ul>
+          <li>Put this one file in a GitHub repo and turn on Pages. You get a permanent <code>https://</code> address, which Spotify accepts without any of the loopback caveats, and it works from your phone too.</li>
+          <li>Any static host works the same way: Netlify Drop, Cloudflare Pages, Vercel.</li>
+          <li>Or skip Spotify entirely and use the paste option on the home screen. It takes a CSV export as well as plain text.</li>
+        </ul>
+      </details>
+      <div class="notice">
+        The account that owns the app needs Spotify Premium, and only playlists you own or collaborate on can be read. Both rules landed in Spotify's March 2026 changes and neither has a workaround.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PLAYLIST PICK ===== -->
+  <section id="s-pick" class="hidden">
+    <div class="card">
+      <h2>Your playlists</h2>
+      <p class="sub">Playlists you own or collaborate on. Under 10 tracks is greyed out.</p>
+      <div class="field"><input type="text" id="pl-filter" placeholder="Filter by name…" autocomplete="off"></div>
+      <div class="list" id="pl-list"></div>
+      <div class="status" id="pick-status"></div>
+    </div>
+    <div class="rail"><span class="stats" id="who">—</span><button id="signout-btn">Sign out</button></div>
+  </section>
+
+  <!-- ===== SETUP ===== -->
+  <section id="s-setup" class="hidden">
+    <div class="card">
+      <h2 id="setup-title">—</h2>
+      <p class="sub" id="setup-sub">—</p>
+
+      <div class="eyebrow" style="margin-bottom:8px">Format</div>
+      <div class="seg" id="seg-mode">
+        <button data-mode="endless" class="on">Endless</button>
+        <button data-mode="five">5 songs</button>
+        <button data-mode="ten">10 songs</button>
+        <button data-mode="h2h">Head to head</button>
+      </div>
+
+      <div id="names-box" class="hidden">
+        <div class="names">
+          <input type="text" id="p1" placeholder="Player 1" autocomplete="off" maxlength="14">
+          <input type="text" id="p2" placeholder="Player 2" autocomplete="off" maxlength="14">
+        </div>
+        <p class="hint">Five songs each, taking turns. Miss one and you are out, though the round always finishes so both players face the same number of songs. Survive all five and the higher score wins, with total time breaking a tie.</p>
+      </div>
+
+      <div class="eyebrow" style="margin:20px 0 8px">Let it run up to</div>
+      <div class="chips" id="chips"></div>
+      <div class="legend" id="legend"></div>
+      <p class="hint">Every wrong guess or skip unlocks the next length. Points are fixed per length, so naming a track at 1 second always beats naming it at 5.</p>
+
+      <button class="btn btn-primary btn-wide" id="start-btn" style="margin-top:22px">Start</button>
+      <div class="status" id="setup-status"></div>
+    </div>
+    <div class="rail"><span class="stats" id="setup-src">—</span><button id="back-home">Change music</button></div>
+  </section>
+
+  <!-- ===== PASS ===== -->
+  <section id="s-pass" class="hidden">
+    <div class="card pass">
+      <div class="who" id="pass-who">—</div>
+      <div class="sub" id="pass-sub">—</div>
+      <button class="btn btn-primary btn-wide" id="pass-btn">Start my turn</button>
+      <div class="clock" id="pass-clock">—</div>
+    </div>
+  </section>
+
+  <!-- ===== GAME ===== -->
+  <section id="s-game" class="hidden">
+    <div class="stage-card">
+      <div class="stage-head">
+        <span class="src" id="g-src">—</span>
+        <span class="pos" id="g-pos">—</span>
+      </div>
+      <div class="player">
+        <svg class="ring" viewBox="0 0 172 172" aria-hidden="true">
+          <circle class="bg" cx="86" cy="86" r="80"></circle>
+          <circle class="fg" id="ring-fg" cx="86" cy="86" r="80"></circle>
+        </svg>
+        <button class="play-circle" id="play-btn" aria-label="Play clip"><span class="ico"></span></button>
+      </div>
+      <div class="clip-len" id="clip-len">—</div>
+      <div class="clip-cap" id="clip-cap">of the track unlocked</div>
+      <div class="pills" id="pills"></div>
+    </div>
+
+    <div class="attempts" id="attempts"></div>
+
+    <div id="input-area">
+      <div class="guess-wrap">
+        <ul class="suggest" id="suggest"></ul>
+        <input type="text" id="guess" autocomplete="off" spellcheck="false" placeholder="Search for a song…">
+      </div>
+      <div class="acts">
+        <button class="btn" id="skip-btn">Skip</button>
+        <button class="btn btn-primary" id="submit-btn" disabled>Submit</button>
+      </div>
+    </div>
+
+    <div class="card reveal hidden" id="reveal">
+      <div class="verdict" id="verdict"></div>
+      <img class="art" id="art" alt="" width="132" height="132">
+      <h3 id="rv-title"></h3>
+      <div class="by" id="rv-artist"></div>
+      <div class="sq" id="rv-sq"></div>
+      <a class="link-out hidden" id="rv-link" href="#" target="_blank" rel="noopener">Open in Spotify</a>
+      <button class="btn btn-primary btn-wide" id="next-btn" style="margin-top:17px">Next song</button>
+    </div>
+
+    <div class="rail" style="margin-top:11px">
+      <span class="stats" id="run-stats">—</span>
+      <span class="grp">
+        <button id="reroll-btn" class="hidden">Reroll</button>
+        <button id="quit-btn">End run</button>
+      </span>
+    </div>
+    <div class="notice hidden" id="notice"></div>
+  </section>
+
+  <!-- ===== SUMMARY ===== -->
+  <section id="s-summary" class="hidden">
+    <div class="card reveal" id="sum"></div>
+    <div class="acts">
+      <button class="btn" id="sum-copy">Copy result</button>
+      <button class="btn" id="sum-setup">Change format</button>
+      <button class="btn btn-primary" id="sum-again">Play again</button>
+    </div>
+  </section>
+
+</div>
+
+<audio id="au" preload="auto"></audio>
+
+<script>
+(function(){
+'use strict';
+
+var $ = function(id){ return document.getElementById(id); };
+var HERE = location.origin + location.pathname;
+var REDIRECT = HERE;
+var SCOPES = 'playlist-read-private playlist-read-collaborative';
+
+/* Clip ladder. Points are fixed per length, so naming a track at 1s always
+   beats naming it at 5s no matter where you cap the run. */
+var LADDER = [
+  {ms:100,   label:'0.1s', pts:6},
+  {ms:1000,  label:'1s',   pts:5},
+  {ms:2000,  label:'2s',   pts:4},
+  {ms:5000,  label:'5s',   pts:3},
+  {ms:10000, label:'10s',  pts:2},
+  {ms:15000, label:'15s',  pts:1}
+];
+var MAX_PTS = 6;
+var CAPS = [1000, 2000, 5000, 10000, 15000];
+function stages(){ return LADDER.filter(function(s){ return s.ms <= S.cap; }); }
+function totalPts(p){ return p.results.reduce(function(a,r){ return a+r.points; }, 0); }
+
+var S = {
+  clientId:'', token:'', refresh:'', tokenExp:0, meId:'', meName:'',
+  playlists:[], sourceName:'', sourceKind:'list', tracks:[], cap:15000,
+  mode:'endless', setLen:0, players:[], turnIdx:0,
+  current:null, stage:0, guesses:[], over:false, won:false, roundStart:0,
+  selected:null, hi:-1, filtered:[], best:0
+};
+
+/* ---------- storage ---------- */
+function memGet(k){
+  try{ if(window.storage && window.storage.get)
+    return window.storage.get(k).then(function(r){ return r?JSON.parse(r.value):null; }).catch(function(){ return null; });
+  }catch(e){}
+  try{ var v=localStorage.getItem(k); return Promise.resolve(v?JSON.parse(v):null); }catch(e){ return Promise.resolve(null); }
+}
+function memSet(k,v){
+  try{ if(window.storage && window.storage.set) return window.storage.set(k, JSON.stringify(v)).catch(function(){}); }catch(e){}
+  try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){}
+  return Promise.resolve();
+}
+function ses(k,v){ try{ if(v===undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k,v); }catch(e){ return null; } }
+
+var SCREENS=['s-home','s-connect','s-pick','s-setup','s-pass','s-game','s-summary'];
+function show(id){
+  SCREENS.forEach(function(s){ $(s).classList.toggle('hidden', s!==id); });
+  $('home-btn').classList.toggle('hidden', id==='s-home');
+  window.scrollTo(0,0);
+}
+
+/* ---------- audio: Apple preview clips, precisely cut ---------- */
+var AU = { el:null, cache:{}, playing:false, limit:0, raf:0, timer:0, t0:0, ready:false };
+
+function jsonp(url){
+  return new Promise(function(res,rej){
+    var cb='itcb'+Math.random().toString(36).slice(2), s=document.createElement('script');
+    var timer=setTimeout(function(){ clean(); rej(new Error('timeout')); },9000);
+    function clean(){ try{ delete window[cb]; }catch(e){ window[cb]=undefined; } if(s.parentNode) s.parentNode.removeChild(s); }
+    window[cb]=function(d){ clearTimeout(timer); clean(); res(d); };
+    s.onerror=function(){ clearTimeout(timer); clean(); rej(new Error('blocked')); };
+    s.src=url+'&callback='+cb;
+    document.head.appendChild(s);
+  });
+}
+function norm(s){
+  return (s||'').toLowerCase().replace(/\(.*?\)|\[.*?\]/g,' ').replace(/\s-\s.*$/,' ')
+    .replace(/[^a-z0-9\u00e0-\u00ff ]/g,' ').replace(/\s+/g,' ').trim();
+}
+function findClip(t){
+  if(AU.cache[t.id] !== undefined) return Promise.resolve(AU.cache[t.id]);
+  return jsonp('https://itunes.apple.com/search?media=music&entity=song&limit=8&term=' +
+      encodeURIComponent(t.artists[0]+' '+t.name))
+    .then(function(r){
+      var rs=(r&&r.results)||[], wn=norm(t.name), wa=norm(t.artists[0]), best=null, i, x;
+      for(i=0;i<rs.length;i++){ x=rs[i];
+        if(x.previewUrl && norm(x.trackName)===wn && norm(x.artistName).indexOf(wa)>=0){ best=x; break; } }
+      if(!best) for(i=0;i<rs.length;i++){ if(rs[i].previewUrl && norm(rs[i].trackName)===wn){ best=rs[i]; break; } }
+      if(!best) for(i=0;i<rs.length;i++){ if(rs[i].previewUrl){ best=rs[i]; break; } }
+      if(!best){ AU.cache[t.id]=null; return null; }
+      AU.cache[t.id]=best.previewUrl;
+      if(!t.art && best.artworkUrl100) t.art=best.artworkUrl100.replace('100x100','400x400');
+      return best.previewUrl;
+    }).catch(function(){ return null; });
+}
+
+function loadClip(url){
+  AU.ready=false;
+  return new Promise(function(res){
+    var el=AU.el;
+    var done=function(){ el.removeEventListener('canplaythrough',done); AU.ready=true; res(true); };
+    el.addEventListener('canplaythrough',done);
+    el.src=url; el.load();
+    setTimeout(function(){ if(!AU.ready){ AU.ready=true; res(true); } },6000);
+  });
+}
+
+function playClip(ms){
+  if(AU.playing){ stopClip(); return; }
+  var el=AU.el;
+  AU.limit=ms; AU.playing=true;
+  setPlay(true);
+  try{ el.currentTime=0; }catch(e){}
+  var begin=function(){
+    el.removeEventListener('playing',begin);
+    AU.t0=performance.now();
+    AU.timer=setTimeout(stopClip, ms);
+    ringLoop();
+  };
+  el.addEventListener('playing',begin);
+  var p=el.play();
+  if(p && p.catch) p.catch(function(){
+    el.removeEventListener('playing',begin);
+    AU.playing=false; setPlay(false);
+    notice('Your browser blocked playback until you interact with the page. Press play again.');
+  });
+}
+function ringLoop(){
+  var pct=Math.min(1,(performance.now()-AU.t0)/AU.limit);
+  setRing(pct);
+  if(pct<1) AU.raf=requestAnimationFrame(ringLoop);
+}
+function stopClip(){
+  clearTimeout(AU.timer); cancelAnimationFrame(AU.raf);
+  if(AU.el) AU.el.pause();
+  AU.playing=false; setRing(0); setPlay(false);
+}
+
+/* ---------- spotify (import only) ---------- */
+function randStr(n){ var a=new Uint8Array(n); crypto.getRandomValues(a);
+  return Array.prototype.map.call(a,function(b){ return ('0'+b.toString(16)).slice(-2); }).join(''); }
+function b64url(buf){ var s='',b=new Uint8Array(buf); for(var i=0;i<b.length;i++) s+=String.fromCharCode(b[i]);
+  return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+
+function beginLogin(){
+  var cid=$('cid').value.trim();
+  if(!cid){ status('connect-status','Paste your Client ID first.','err'); return; }
+  if(location.protocol==='file:'){
+    status('connect-status','Spotify will not redirect back to a file:// address. Serve the folder instead: run "python3 -m http.server 8080" in it and open http://127.0.0.1:8080/','err'); return;
+  }
+  if(location.hostname==='localhost'){
+    status('connect-status','Spotify rejects "localhost". Open this at http://127.0.0.1'+(location.port?':'+location.port:'')+location.pathname+' instead.','err'); return;
+  }
+  REDIRECT = $('redir').value.trim() || HERE;
+  memSet('intro:redir',REDIRECT);
+  var v=randStr(48); ses('intro_v',v); ses('intro_cid',cid); ses('intro_r',REDIRECT); memSet('intro:cid',cid);
+  crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)).then(b64url).then(function(ch){
+    location.href='https://accounts.spotify.com/authorize?'+new URLSearchParams({
+      client_id:cid, response_type:'code', redirect_uri:REDIRECT,
+      code_challenge_method:'S256', code_challenge:ch, scope:SCOPES}).toString();
+  });
+}
+function readTok(r){
+  return r.json().then(function(j){
+    if(!r.ok) throw new Error(j.error_description||j.error||('Spotify returned '+r.status));
+    S.token=j.access_token;
+    if(j.refresh_token) S.refresh=j.refresh_token;
+    S.tokenExp=Date.now()+(j.expires_in||3600)*1000;
+    return j;
+  });
+}
+function exchange(code){
+  var v=ses('intro_v'), cid=ses('intro_cid'), rd=ses('intro_r')||REDIRECT;
+  if(!v||!cid) return Promise.reject(new Error('Login session was lost. Try connecting again.'));
+  REDIRECT=rd;
+  return fetch('https://accounts.spotify.com/api/token',{method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:new URLSearchParams({grant_type:'authorization_code',code:code,redirect_uri:REDIRECT,client_id:cid,code_verifier:v})
+  }).then(readTok).then(function(j){ S.clientId=cid; memSet('intro:refresh',{cid:cid,token:S.refresh}); return j; });
+}
+function refreshTok(){
+  if(!S.refresh||!S.clientId) return Promise.reject(new Error('Session expired.'));
+  return fetch('https://accounts.spotify.com/api/token',{method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:new URLSearchParams({grant_type:'refresh_token',refresh_token:S.refresh,client_id:S.clientId})}).then(readTok);
+}
+function api(path){
+  var ready=(S.token && Date.now()<S.tokenExp-30000)?Promise.resolve():refreshTok();
+  return ready.then(function(){
+    return fetch('https://api.spotify.com/v1'+path,{headers:{Authorization:'Bearer '+S.token}});
+  }).then(function(r){
+    return r.json().then(function(j){
+      if(!r.ok){
+        var m=(j.error&&j.error.message)||('HTTP '+r.status);
+        if(r.status===403) m='Spotify refused that (403). Either the account owning your app is not on Premium, or that playlist is not one you own.';
+        if(r.status===401) m='Your Spotify session expired. Sign out and connect again.';
+        throw new Error(m);
+      }
+      return j;
+    });
+  });
+}
+function myPlaylists(){
+  return api('/me').then(function(me){
+    S.meId=me.id; S.meName=me.display_name||me.id;
+    var out=[],off=0;
+    function page(){
+      return api('/me/playlists?limit=50&offset='+off).then(function(p){
+        (p.items||[]).forEach(function(pl){
+          if(!pl) return;
+          if(!((pl.owner&&pl.owner.id===S.meId)||pl.collaborative)) return;
+          out.push({id:pl.id,name:pl.name||'Untitled',
+            total:(pl.items&&pl.items.total)||(pl.tracks&&pl.tracks.total)||0});
+        });
+        off+=50;
+        if(p.next && off<400) return page();
+      });
+    }
+    return page().then(function(){ return out; });
+  });
+}
+function playlistTracks(id){
+  var out=[],off=0;
+  function page(){
+    return api('/playlists/'+id+'/items?limit=100&offset='+off).then(function(p){
+      (p.items||[]).forEach(function(row){
+        var t=row&&(row.item||row.track);
+        if(!t||row.is_local||!t.id||!t.artists||!t.artists.length) return;
+        if(t.type&&t.type!=='track') return;
+        out.push({id:t.id,name:t.name,artists:t.artists.map(function(a){return a.name;}),
+          art:(t.album&&t.album.images&&t.album.images.length)?t.album.images[0].url:'', spotify:true});
+      });
+      off+=100;
+      if(p.next && off<1000) return page();
+    });
+  }
+  return page().then(function(){
+    var seen={},u=[]; out.forEach(function(t){ if(!seen[t.id]){seen[t.id]=1;u.push(t);} }); return u;
+  });
+}
+
+/* ---------- drawing ---------- */
+var C = 2*Math.PI*80;
+$('ring-fg').style.strokeDasharray = C;
+function setRing(p){ $('ring-fg').style.strokeDashoffset = C*(1-p); }
+function setPlay(on){ $('play-btn').classList.toggle('on',on); }
+function status(id,msg,kind){ var e=$(id); e.textContent=msg||''; e.className='status'+(kind?' '+kind:''); }
+function notice(m){ var n=$('notice'); if(!m){ n.classList.add('hidden'); return; } n.textContent=m; n.classList.remove('hidden'); }
+function fmt(ms){ var s=Math.round(ms/1000); return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
+function esc(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+function drawStage(){
+  var st=stages(), cur0=st[S.stage];
+  $('clip-len').textContent=cur0.label;
+  $('clip-cap').textContent='unlocked \u00B7 worth '+cur0.pts+' pt'+(cur0.pts===1?'':'s')+' if you get it now';
+  var p=$('pills'); p.innerHTML='';
+  st.forEach(function(s,i){
+    var el=document.createElement('span');
+    el.className='pill'+(i<S.stage?' past':(i===S.stage?' now':''));
+    el.textContent=s.label;
+    p.appendChild(el);
+  });
+}
+function drawAttempts(){
+  var st=stages(), w=$('attempts'); w.innerHTML='';
+  for(var i=0;i<st.length;i++){
+    var g=S.guesses[i], d=document.createElement('div');
+    if(!g){
+      d.className='att empty';
+      d.innerHTML='<span class="m">'+(i+1)+'</span><span class="t"></span>';
+    } else {
+      d.className='att '+g.type;
+      var m=g.type==='correct'?'\u25CF':(g.type==='wrong'?'\u2715':'\u2192');
+      d.innerHTML='<span class="m">'+m+'</span><span class="t"></span>';
+      d.querySelector('.t').textContent=g.label;
+    }
+    w.appendChild(d);
+  }
+}
+function drawHead(){
+  var p=cur();
+  $('g-src').textContent = S.mode==='h2h' ? p.name : S.sourceName;
+  $('g-pos').textContent = S.over ? 'Revealed'
+    : (S.mode==='endless' ? ('Round '+(S.turnIdx+1)) : ('Song '+(round()+1)+' of '+S.setLen));
+  var solved=p.results.filter(function(r){return r.solved;}).length;
+  var pts=p.results.reduce(function(a,r){return a+r.points;},0);
+  $('run-stats').textContent = S.mode==='h2h'
+    ? (p.name.toUpperCase()+' \u00B7 '+fmt(p.ms))
+    : (S.mode==='endless' ? ('STREAK '+p.streak+' \u00B7 BEST '+S.best+' \u00B7 '+solved+'/'+p.results.length)
+                          : (pts+' PTS \u00B7 '+solved+'/'+p.results.length));
+}
+
+/* ---------- run control ---------- */
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.random()*(i+1)|0,t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function cur(){ return S.players[S.mode==='h2h' ? S.turnIdx%2 : 0]; }
+function round(){ return S.mode==='h2h' ? Math.floor(S.turnIdx/2) : S.turnIdx; }
+function totalTurns(){ return S.mode==='endless' ? Infinity : (S.mode==='h2h' ? S.setLen*2 : S.setLen); }
+function fatal(i){ return S.mode==='h2h' && i%2===0 && (S.players[0].out||S.players[1].out); }
+function willEnd(){ var n=S.turnIdx+1; return n>=totalTurns()||fatal(n); }
+
+function newPlayer(name){ return {name:name,queue:[],results:[],ms:0,out:false,streak:0}; }
+
+function startRun(){
+  var st=stages();
+  if(!st.length){ status('setup-status','Pick a maximum clip length.','err'); return; }
+  var need = S.mode==='ten'?10:(S.mode==='h2h'?10:(S.mode==='five'?5:1));
+  if(S.tracks.length<Math.max(need,10)){
+    status('setup-status','This needs at least '+Math.max(need,10)+' tracks and the list has '+S.tracks.length+'.','err'); return;
+  }
+  status('setup-status','');
+  var deck=shuffle(S.tracks);
+  if(S.mode==='h2h'){
+    S.setLen=5;
+    S.players=[newPlayer($('p1').value.trim()||'Player 1'), newPlayer($('p2').value.trim()||'Player 2')];
+    S.players[0].queue=deck.slice(0,5); S.players[1].queue=deck.slice(5,10);
+  } else {
+    S.setLen = S.mode==='ten'?10:(S.mode==='five'?5:0);
+    S.players=[newPlayer('You')];
+    S.players[0].queue = S.mode==='endless' ? deck : deck.slice(0,S.setLen);
+  }
+  S.players.forEach(function(p){ p.pool = deck; });
+  S.turnIdx=0;
+  step();
+}
+
+function step(){
+  if(S.turnIdx>=totalTurns()||fatal(S.turnIdx)){ summary(); return; }
+  if(S.mode==='h2h'){ passScreen(); return; }
+  startRound();
+}
+function passScreen(){
+  var p=cur(), a=S.players[0], b=S.players[1];
+  $('pass-who').textContent=p.name;
+  $('pass-sub').textContent='Song '+(round()+1)+' of '+S.setLen+'. The clock starts when you tap.';
+  $('pass-clock').textContent=a.name+' '+fmt(a.ms)+'   \u00B7   '+b.name+' '+fmt(b.ms);
+  show('s-pass');
+}
+
+function pickTrack(){
+  var p=cur();
+  if(S.mode==='endless'){
+    if(!p.queue.length) p.queue=shuffle(p.pool);
+    return p.queue.shift();
+  }
+  return p.queue[round()];
+}
+
+function startRound(track, attempt){
+  attempt = attempt || 0;
+  stopClip();
+  notice('');
+  S.current = track || pickTrack();
+  S.stage=0; S.guesses=[]; S.over=false; S.won=false; S.selected=null;
+  $('guess').value=''; $('submit-btn').disabled=true;
+  $('reveal').classList.add('hidden');
+  $('input-area').classList.remove('hidden');
+  $('reroll-btn').classList.toggle('hidden', S.mode!=='endless');
+  $('quit-btn').textContent = S.mode==='endless' ? 'End run' : 'Quit';
+  closeSuggest(); drawStage(); drawAttempts(); drawHead(); setRing(0); setPlay(false);
+  show('s-game');
+
+  $('play-btn').disabled=true;
+  $('clip-len').innerHTML='<span class="spin"></span>';
+  $('clip-cap').textContent='finding the clip';
+  S.roundStart=performance.now();
+
+  var wanted=S.current;
+  findClip(wanted).then(function(url){
+    if(S.current!==wanted) return;
+    if(!url){
+      if(attempt<6){
+        var used={}; used[wanted.id]=1;
+        cur().results.forEach(function(r){ used[r.track.id]=1; });
+        var swap=(cur().pool||S.tracks).filter(function(t){ return !used[t.id] && AU.cache[t.id]!==null; });
+        var repl=swap[Math.random()*swap.length|0];
+        if(repl){
+          if(S.mode!=='endless') cur().queue[round()]=repl;
+          startRound(repl, attempt+1);
+          return;
+        }
+      }
+      $('clip-len').textContent='\u2014';
+      $('clip-cap').textContent='no clip available';
+      notice('No preview could be found for this track. Press Skip to move on.');
+      return;
+    }
+    return loadClip(url).then(function(){
+      if(S.current!==wanted) return;
+      $('play-btn').disabled=false;
+      drawStage();
+      S.roundStart=performance.now();
+    });
+  });
+
+  $('guess').focus();
+}
+
+/* ---------- guessing ---------- */
+function label(t){ return t.artists.join(', ')+' \u2014 '+t.name; }
+function match(q){
+  var n=norm(q); if(!n) return [];
+  var a=[],b=[];
+  for(var i=0;i<S.tracks.length;i++){
+    var t=S.tracks[i], k=norm(t.name+' '+t.artists.join(' ')).indexOf(n);
+    if(k===0) a.push(t); else if(k>0) b.push(t);
+    if(a.length+b.length>90) break;
+  }
+  return a.concat(b).slice(0,60);
+}
+function openSuggest(list){
+  var ul=$('suggest'); ul.innerHTML=''; S.filtered=list; S.hi=-1;
+  if(!list.length){ ul.innerHTML='<li class="none">Nothing in this list matches.</li>'; ul.classList.add('open'); return; }
+  list.forEach(function(t,i){
+    var li=document.createElement('li');
+    var a=document.createElement('span'); a.className='a'; a.textContent=t.artists.join(', ');
+    var b=document.createElement('span'); b.textContent=t.name;
+    li.appendChild(b); li.appendChild(a);
+    li.addEventListener('mousedown',function(e){ e.preventDefault(); pick(i); });
+    ul.appendChild(li);
+  });
+  ul.classList.add('open');
+}
+function closeSuggest(){ $('suggest').classList.remove('open'); S.hi=-1; }
+function hilite(n){
+  var items=$('suggest').querySelectorAll('li:not(.none)');
+  if(!items.length) return;
+  if(S.hi>=0&&items[S.hi]) items[S.hi].classList.remove('hi');
+  S.hi=(n+items.length)%items.length;
+  items[S.hi].classList.add('hi');
+  items[S.hi].scrollIntoView({block:'nearest'});
+}
+function pick(i){
+  var t=S.filtered[i]; if(!t) return;
+  S.selected=t; $('guess').value=label(t); $('submit-btn').disabled=false;
+  closeSuggest(); $('guess').focus();
+}
+function submit(){
+  if(!S.selected||S.over) return;
+  var ok = S.selected.id===S.current.id ||
+    (norm(S.selected.name)===norm(S.current.name) && norm(S.selected.artists[0])===norm(S.current.artists[0]));
+  if(ok){ S.guesses.push({type:'correct',label:label(S.selected)}); endRound(true); }
+  else next({type:'wrong',label:label(S.selected)});
+}
+function next(entry){
+  stopClip();
+  S.guesses.push(entry);
+  var st=stages();
+  if(S.guesses.length>=st.length){ endRound(false); return; }
+  S.stage++;
+  drawStage(); drawAttempts(); drawHead();
+  $('guess').value=''; S.selected=null; $('submit-btn').disabled=true;
+  closeSuggest(); $('guess').focus();
+}
+function squares(gs){
+  var st=stages(), out='';
+  for(var i=0;i<st.length;i++){
+    var g=gs[i];
+    out += !g ? '\u2B1C' : (g.type==='correct'?'\uD83D\uDFE9':(g.type==='wrong'?'\uD83D\uDFE5':'\u2B1B'));
+  }
+  return out;
+}
+
+function endRound(won){
+  stopClip();
+  S.over=true; S.won=won;
+  var st=stages();
+  drawAttempts(); drawHead();
+
+  var p=cur(), ms=performance.now()-S.roundStart;
+  var at=st[S.guesses.length-1];
+  p.ms+=ms;
+  p.results.push({track:S.current,guesses:S.guesses.slice(),solved:won,ms:ms,
+    at:at.label, points: won ? at.pts : 0});
+  if(won){ p.streak++; if(p.streak>S.best){ S.best=p.streak; memSet('intro:best',S.best); } }
+  else { p.streak=0; if(S.mode==='h2h') p.out=true; }
+
+  $('input-area').classList.add('hidden');
+  $('verdict').textContent = won ? ('Named it at '+at.label+' \u00B7 '+at.pts+' pts') : 'Out of guesses';
+  $('verdict').className='verdict '+(won?'win':'lose');
+  var art=$('art');
+  if(S.current.art){ art.src=S.current.art; art.style.display='block'; } else art.style.display='none';
+  $('rv-title').textContent=S.current.name;
+  $('rv-artist').textContent=S.current.artists.join(', ');
+  $('rv-sq').textContent=squares(S.guesses);
+  var l=$('rv-link');
+  if(S.current.spotify){ l.href='https://open.spotify.com/track/'+S.current.id; l.classList.remove('hidden'); }
+  else l.classList.add('hidden');
+
+  if(S.mode==='endless') $('next-btn').textContent='Next song';
+  else if(willEnd()) $('next-btn').textContent = S.mode==='h2h'?'See who won':'See results';
+  else $('next-btn').textContent = S.mode==='h2h'?'Hand over':'Next song';
+  $('reveal').classList.remove('hidden');
+  $('next-btn').focus();
+}
+
+/* ---------- summary ---------- */
+function summary(){
+  stopClip();
+  var st=stages(), h='';
+  if(S.mode==='h2h'){
+    var a=S.players[0], b=S.players[1], w=null, why='';
+    if(a.out&&!b.out){ w=b; why=a.name+' missed one'; }
+    else if(b.out&&!a.out){ w=a; why=b.name+' missed one'; }
+    else if(a.out&&b.out){ why='Both went out'; }
+    else if(totalPts(a)!==totalPts(b)){
+      w = totalPts(a)>totalPts(b) ? a : b;
+      why = 'Named them from less audio, '+Math.max(totalPts(a),totalPts(b))+' points to '+Math.min(totalPts(a),totalPts(b));
+    }
+    else if(a.ms!==b.ms){ w = a.ms<b.ms ? a : b; why='Level on points, faster by '+fmt(Math.abs(a.ms-b.ms)); }
+    else why='Dead heat';
+    h+='<div class="verdict '+(w?'win':'lose')+'">Head to head</div>';
+    h+='<h3>'+esc(w?w.name+' wins':'Nobody wins')+'</h3><div class="by">'+esc(why)+'</div><div class="h2h">';
+    [a,b].forEach(function(pl){
+      h+='<div class="h2h-col'+(w===pl?' win':'')+'"><h4>'+esc(pl.name)+'</h4><div class="t">'+totalPts(pl)+' pts</div>'+
+         '<div class="ts">'+fmt(pl.ms)+'</div><div class="s">';
+      pl.results.forEach(function(r){ h+=squares(r.guesses)+'<br>'; });
+      h+='</div></div>';
+    });
+    h+='</div>';
+  } else {
+    var p=S.players[0];
+    if(!p.results.length){
+      $('sum').innerHTML='<div class="verdict">Nothing played</div><h3>Run ended early</h3>' +
+        '<div class="by">No songs were finished, so there is nothing to score.</div>';
+      show('s-summary'); return;
+    }
+    var pts=p.results.reduce(function(s,r){return s+r.points;},0);
+    var solved=p.results.filter(function(r){return r.solved;}).length;
+    var max=p.results.length*MAX_PTS;
+    h+='<div class="verdict'+(solved===p.results.length&&solved?' win':'')+'">'+esc(S.sourceName)+'</div>';
+    h+='<div class="bigscore">'+pts+'<small> / '+max+'</small></div>';
+    h+='<div class="by">'+solved+' of '+p.results.length+' named \u00B7 '+fmt(p.ms)+
+       (S.mode==='endless'?(' \u00B7 best streak '+S.best):'')+'</div><div class="tally">';
+    p.results.forEach(function(r){
+      h+='<div class="tally-row"><span class="s">'+squares(r.guesses)+'</span><span class="nm">'+
+         esc(r.track.artists[0]+' \u2014 '+r.track.name)+'</span><span class="pt">'+r.points+'</span></div>';
+    });
+    h+='</div>';
+  }
+  $('sum').innerHTML=h;
+  show('s-summary');
+}
+function sumText(){
+  var head='Intro \u00B7 '+S.sourceName+'\n';
+  if(S.mode==='h2h') return head+S.players.map(function(p){
+    return p.name+' '+fmt(p.ms)+(p.out?' (out)':'')+'\n'+p.results.map(function(r){return squares(r.guesses);}).join('\n');
+  }).join('\n\n');
+  var p=S.players[0], pts=p.results.reduce(function(s,r){return s+r.points;},0);
+  return head+pts+'/'+(p.results.length*MAX_PTS)+' \u00B7 '+fmt(p.ms)+'\n'+
+    p.results.map(function(r){return squares(r.guesses);}).join('\n');
+}
+
+/* ---------- sources ---------- */
+function splitCsv(line){
+  var out=[], cur='', q=false;
+  for(var i=0;i<line.length;i++){
+    var c=line[i];
+    if(q){
+      if(c==='"'){ if(line[i+1]==='"'){ cur+='"'; i++; } else q=false; }
+      else cur+=c;
+    } else if(c==='"') q=true;
+    else if(c===','||c==='\t'){ out.push(cur); cur=''; }
+    else cur+=c;
+  }
+  out.push(cur);
+  return out.map(function(x){ return x.trim(); });
+}
+function parseSongs(text){
+  var lines=text.split(/\r?\n/).map(function(l){ return l.trim(); }).filter(Boolean);
+  if(!lines.length) return [];
+
+  /* CSV export? Look for a header row naming a track and an artist column. */
+  var head=splitCsv(lines[0]).map(function(h){ return h.toLowerCase(); });
+  var ti=-1, ai=-1;
+  head.forEach(function(h,i){
+    if(ti<0 && /track ?name|^track$|^title$|^song$|song ?name/.test(h)) ti=i;
+    if(ai<0 && /artist/.test(h)) ai=i;
+  });
+  if(ti>=0 && ai>=0 && head.length>1){
+    var outc=[];
+    lines.slice(1).forEach(function(l,i){
+      var c=splitCsv(l);
+      if(!c[ti]||!c[ai]) return;
+      outc.push({id:'c'+i, name:c[ti], artists:[c[ai].split(/\s*[,;]\s*/)[0]], art:''});
+    });
+    if(outc.length) return outc;
+  }
+
+  /* Otherwise: one "Artist - Title" per line. */
+  var out=[];
+  lines.forEach(function(l,i){
+    var parts=l.split(/\s+[-\u2013\u2014]\s+/);
+    if(parts.length<2) return;
+    out.push({id:'m'+i, artists:[parts[0].trim()], name:parts.slice(1).join(' - ').trim(), art:''});
+  });
+  return out;
+}
+
+function useSource(name, tracks, kind){
+  S.sourceName=name; S.tracks=tracks; S.sourceKind=kind;
+  $('setup-title').textContent=name;
+  $('setup-sub').textContent=tracks.length+' tracks. Guesses autocomplete from this list only, so every round is winnable.';
+  $('setup-src').textContent=tracks.length+' TRACKS';
+  show('s-setup');
+}
+function renderPlaylists(){
+  var q=norm($('pl-filter').value), list=$('pl-list'); list.innerHTML='';
+  var shown=S.playlists.filter(function(p){ return !q||norm(p.name).indexOf(q)>=0; });
+  if(!shown.length){ list.innerHTML='<div class="list-item dim">No playlists match.</div>'; return; }
+  shown.slice(0,200).forEach(function(p){
+    var b=document.createElement('button');
+    b.className='list-item'+(p.total<10?' dim':'');
+    var n=document.createElement('span'); n.textContent=p.name;
+    var c=document.createElement('span'); c.className='n'; c.textContent=p.total+' tracks';
+    b.appendChild(n); b.appendChild(c);
+    if(p.total>=10) b.addEventListener('click',function(){
+      status('pick-status','Loading \u201C'+p.name+'\u201D\u2026','wait');
+      playlistTracks(p.id).then(function(ts){
+        if(ts.length<10) throw new Error('Only '+ts.length+' usable tracks after skipping local files and episodes.');
+        status('pick-status','');
+        useSource(p.name, ts, 'spotify');
+      }).catch(function(e){ status('pick-status',e.message,'err'); });
+    });
+    list.appendChild(b);
+  });
+}
+function enterSpotify(){
+  return myPlaylists().then(function(pls){
+    S.playlists=pls.sort(function(a,b){ return b.total-a.total; });
+    $('who').textContent='SIGNED IN AS '+(S.meName||'').toUpperCase();
+    renderPlaylists(); show('s-pick');
+    if(!pls.length) status('pick-status','No playlists found that you own. Make one in Spotify and reload.','err');
+  });
+}
+
+/* ---------- cap selector ---------- */
+function renderCaps(){
+  var box=$('chips'); box.innerHTML='';
+  CAPS.forEach(function(ms){
+    var b=document.createElement('button');
+    var lab=LADDER.filter(function(x){ return x.ms===ms; })[0].label;
+    b.className='chip'+(S.cap===ms?' on':''); b.textContent=lab;
+    b.addEventListener('click',function(){ S.cap=ms; renderCaps(); memSet('intro:cap',ms); });
+    box.appendChild(b);
+  });
+  var l=$('legend'); l.innerHTML='';
+  stages().forEach(function(st){
+    var d=document.createElement('div'); d.className='leg';
+    d.innerHTML='<span class="ll"></span><span class="lp"></span>';
+    d.querySelector('.ll').textContent=st.label;
+    d.querySelector('.lp').textContent=st.pts+' pt'+(st.pts===1?'':'s');
+    l.appendChild(d);
+  });
+}
+
+/* ---------- wiring ---------- */
+renderCaps();
+$('redir').value=HERE;
+AU.el=$('au');
+
+$('home-btn').addEventListener('click',function(){ stopClip(); show('s-home'); });
+$('tile-spotify').addEventListener('click',function(){ show(S.token?'s-pick':'s-connect'); });
+$('tile-manual').addEventListener('click',function(){
+  $('manual-card').classList.toggle('hidden');
+  if(!$('manual-card').classList.contains('hidden')) $('manual-text').focus();
+});
+$('manual-go').addEventListener('click',function(){
+  var t=parseSongs($('manual-text').value);
+  if(t.length<10){ status('manual-status','Only found '+t.length+' songs, and 10 is the minimum. Use "Artist - Title" per line, or paste a CSV export with its header row.','err'); return; }
+  status('manual-status',''); useSource('Your list',t,'manual');
+});
+$('copy-redir').addEventListener('click',function(){
+  var i=$('redir'); i.select();
+  var d=function(){ $('copy-redir').textContent='Copied'; setTimeout(function(){ $('copy-redir').textContent='Copy'; },1500); };
+  if(navigator.clipboard) navigator.clipboard.writeText(i.value).then(d,d); else { try{document.execCommand('copy');}catch(e){} d(); }
+});
+function checkRedir(){
+  var v=$('redir').value.trim(), w=$('redir-warn');
+  if(!v||v===HERE){ w.textContent=''; return; }
+  var bare=function(x){ return x.replace(/\/$/,''); };
+  if(bare(v)!==bare(HERE))
+    w.textContent='Heads up: this differs from the address you are on ('+HERE+'), so Spotify will send you somewhere else after login. Only do this if the other address also serves this file.';
+  else w.textContent='';
+}
+$('redir').addEventListener('input',checkRedir);
+$('connect-btn').addEventListener('click',beginLogin);
+$('cid').addEventListener('keydown',function(e){ if(e.key==='Enter') beginLogin(); });
+$('signout-btn').addEventListener('click',function(){
+  S.token=''; S.refresh=''; S.tokenExp=0; memSet('intro:refresh',null); show('s-home');
+});
+$('pl-filter').addEventListener('input',renderPlaylists);
+$('back-home').addEventListener('click',function(){ show('s-home'); });
+
+Array.prototype.forEach.call($('seg-mode').children,function(b){
+  b.addEventListener('click',function(){
+    Array.prototype.forEach.call($('seg-mode').children,function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    S.mode=b.dataset.mode;
+    $('names-box').classList.toggle('hidden', S.mode!=='h2h');
+  });
+});
+$('start-btn').addEventListener('click',startRun);
+$('pass-btn').addEventListener('click',function(){ startRound(); });
+
+$('play-btn').addEventListener('click',function(){ if(!S.over) playClip(stages()[S.stage].ms); });
+$('skip-btn').addEventListener('click',function(){ if(!S.over) next({type:'skip',label:'Skipped'}); });
+$('submit-btn').addEventListener('click',submit);
+$('next-btn').addEventListener('click',function(){
+  if(S.mode==='endless'){ S.turnIdx++; startRound(); return; }
+  S.turnIdx++; step();
+});
+$('reroll-btn').addEventListener('click',function(){ startRound(); });
+$('quit-btn').addEventListener('click',function(){ stopClip(); summary(); });
+$('sum-setup').addEventListener('click',function(){ show('s-setup'); });
+$('sum-again').addEventListener('click',startRun);
+$('sum-copy').addEventListener('click',function(){
+  var txt=sumText(), b=$('sum-copy');
+  var d=function(){ b.textContent='Copied'; setTimeout(function(){ b.textContent='Copy result'; },1600); };
+  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(d,d);
+  else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); d(); }
+});
+
+var gi=$('guess');
+gi.addEventListener('input',function(){
+  S.selected=null; $('submit-btn').disabled=true;
+  var v=gi.value.trim();
+  if(!v){ closeSuggest(); return; }
+  openSuggest(match(v));
+});
+gi.addEventListener('keydown',function(e){
+  var open=$('suggest').classList.contains('open');
+  if(e.key==='ArrowDown'){ e.preventDefault(); if(!open) openSuggest(match(gi.value.trim())); hilite(S.hi+1); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); hilite(S.hi-1); }
+  else if(e.key==='Enter'){ e.preventDefault();
+    if(open&&S.hi>=0) pick(S.hi);
+    else if(open&&S.filtered.length===1) pick(0);
+    else if(S.selected) submit();
+  } else if(e.key==='Escape') closeSuggest();
+});
+gi.addEventListener('blur',function(){ setTimeout(closeSuggest,120); });
+document.addEventListener('keydown',function(e){
+  if(e.code==='Space'&&e.target===document.body&&!$('s-game').classList.contains('hidden')&&!S.over){
+    e.preventDefault(); playClip(stages()[S.stage].ms);
+  }
+});
+
+/* ---------- boot ---------- */
+(function(){
+  var qs=new URLSearchParams(location.search), code=qs.get('code'), err=qs.get('error');
+  if(err){
+    history.replaceState({},'',REDIRECT); show('s-connect');
+    status('connect-status','Spotify refused the login: '+err+'. The redirect URI registered on the dashboard has to match the box above exactly, trailing slash and all. Open the troubleshooting section below.','err');
+  }
+  if(code){
+    history.replaceState({},'',REDIRECT); show('s-connect');
+    status('connect-status','Finishing sign-in\u2026','wait');
+    exchange(code).then(enterSpotify).catch(function(e){ status('connect-status',e.message,'err'); });
+    return;
+  }
+  Promise.all([memGet('intro:cid'),memGet('intro:refresh'),memGet('intro:cap'),memGet('intro:best'),memGet('intro:redir')]).then(function(r){
+    if(r[0]) $('cid').value=r[0];
+    if(r[4]){ $('redir').value=r[4]; checkRedir(); }
+    if(r[2]&&CAPS.indexOf(r[2])>=0){ S.cap=r[2]; renderCaps(); }
+    if(r[3]) S.best=r[3];
+    if(r[1]&&r[1].token&&r[1].cid){ S.clientId=r[1].cid; S.refresh=r[1].token; }
+  });
+})();
+
+})();
+</script>
+</body>
+</html>
