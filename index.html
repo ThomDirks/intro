@@ -3,416 +3,453 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Intro — name the track from a fraction of a second</title>
+<meta name="theme-color" content="#D6402A">
+<title>Intro — name the track</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F2EFE9;
-  --surface:#FFFFFF;
-  --surface-2:#F7F5F1;
-  --line:rgba(23,22,15,.09);
-  --line-2:rgba(23,22,15,.16);
-  --ink:#16150F;
-  --ink-2:#6B665C;
-  --ink-3:#9B968B;
-  --accent:#DC4A1E;
-  --green:#4C7A3F;
-  --r-lg:26px; --r-md:18px; --r-sm:13px;
-  --shadow:0 1px 2px rgba(23,22,15,.05), 0 10px 30px -12px rgba(23,22,15,.16);
+  --red:#D6402A; --red-deep:#B3301D;
+  --blue:#2D6BE0; --amber:#E5A50A; --green:#3E8E52; --violet:#8A4FD1;
+  --paper:#F4F1EA; --card:#FFFFFF; --wash:#EBE7DE;
+  --ink:#141210; --ink-2:#615C53; --ink-3:#98928A;
+  --rule:rgba(20,18,16,.13);
+  --r:20px;
   --font:'Archivo',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --shadow:0 1px 2px rgba(20,18,16,.05), 0 14px 34px -16px rgba(20,18,16,.22);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{overflow-x:hidden}
 body{
-  background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;
-  display:flex;justify-content:center;padding:22px 16px 60px;min-height:100vh;-webkit-font-smoothing:antialiased;
-  background-image:radial-gradient(120% 70% at 50% -10%, rgba(255,255,255,.85), transparent 60%);
+  background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;
+  display:flex;justify-content:center;padding:20px 18px 64px;min-height:100vh;-webkit-font-smoothing:antialiased;
 }
-.shell{width:100%;max-width:560px}
-button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+.shell{width:100%;max-width:600px}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none;text-align:left}
 button:disabled{cursor:not-allowed}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+:focus-visible{outline:2.5px solid var(--red);outline-offset:3px}
+code{font-family:var(--mono);font-size:.88em;background:var(--wash);padding:2px 6px;border-radius:5px}
 a{color:var(--ink)}
-code{font-family:var(--mono);font-size:.88em;background:var(--surface-2);padding:2px 5px;border-radius:5px}
 
-.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-.card{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:22px;margin-bottom:12px}
-.card h2{font-size:20px;font-weight:700;letter-spacing:-.022em;margin-bottom:5px}
-.card .sub{font-size:14px;color:var(--ink-2);margin-bottom:18px;line-height:1.5}
+/* ============ SPLASH ============ */
+#splash{position:fixed;inset:0;z-index:999;display:grid;place-items:center;overflow:hidden}
+#splash .bars{position:absolute;inset:0;display:flex}
+#splash .bars i{flex:1;background:var(--red);transform:translateY(0);
+  transition:transform .72s cubic-bezier(.76,0,.24,1)}
+#splash.go .bars i{transform:translateY(-101%)}
+#splash .mid{position:relative;z-index:2;text-align:center;color:#fff;
+  transition:opacity .3s ease,transform .5s cubic-bezier(.76,0,.24,1)}
+#splash.go .mid{opacity:0;transform:translateY(-22px)}
+#splash .word{font-size:clamp(58px,17vw,116px);font-weight:900;letter-spacing:-.055em;line-height:.9;
+  display:flex;justify-content:center;overflow:hidden}
+#splash .word span{display:inline-block;transform:translateY(105%);
+  animation:rise .78s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes rise{to{transform:translateY(0)}}
+#splash .tag{font-family:var(--mono);font-size:11px;letter-spacing:.42em;text-transform:uppercase;
+  margin-top:14px;opacity:0;animation:fade .6s ease .45s forwards;padding-left:.42em}
+@keyframes fade{to{opacity:.82}}
+#splash .num{position:absolute;bottom:26px;right:26px;z-index:2;color:#fff;
+  font-family:var(--mono);font-size:13px;letter-spacing:.1em;opacity:.85}
+#splash.go .num{opacity:0;transition:opacity .25s ease}
+#splash .skip{position:absolute;bottom:26px;left:26px;z-index:2;color:rgba(255,255,255,.7);
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+#splash.done{display:none}
+body.locked{overflow:hidden}
 
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  font-size:15px;font-weight:600;letter-spacing:-.01em;padding:13px 22px;border-radius:999px;
-  background:var(--surface-2);color:var(--ink);transition:transform .12s ease,background .15s ease,opacity .15s ease}
-.btn:active:not(:disabled){transform:scale(.97)}
-.btn:hover:not(:disabled){background:#EDEAE4}
+/* ============ SHARED ============ */
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:24px;margin-bottom:12px}
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px;padding:0 2px}
+.wordmark{font-weight:900;font-size:27px;letter-spacing:-.05em}
+.wordmark i{color:var(--red);font-style:normal}
+.back{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.back:hover{color:var(--red)}
+
+h1.page{font-size:clamp(36px,9vw,52px);font-weight:800;letter-spacing:-.045em;line-height:1;margin-bottom:10px}
+p.lede{font-size:16.5px;color:var(--ink-2);margin-bottom:30px;max-width:44ch}
+
+/* big text buttons */
+.big{display:block;width:100%;padding:24px 2px;border-top:1px solid var(--rule);position:relative}
+.big:last-of-type{border-bottom:1px solid var(--rule)}
+.big .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.big h2{font-size:clamp(25px,6.4vw,34px);font-weight:800;letter-spacing:-.038em;line-height:1.05;
+  transition:color .18s ease,transform .28s cubic-bezier(.2,.9,.3,1)}
+.big p{font-size:14px;color:var(--ink-2);margin-top:7px;max-width:40ch;line-height:1.45}
+.big .arw{font-size:26px;color:var(--ink-3);transition:transform .28s cubic-bezier(.2,.9,.3,1),color .18s ease;flex-shrink:0}
+.big:hover h2{color:var(--red);transform:translateX(7px)}
+.big:hover .arw{color:var(--red);transform:translateX(7px)}
+.big:disabled{opacity:.4}
+.big:disabled:hover h2,.big:disabled:hover .arw{color:inherit;transform:none}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-size:16px;font-weight:700;
+  letter-spacing:-.015em;padding:17px 26px;border-radius:999px;background:var(--wash);color:var(--ink);
+  transition:transform .12s ease,background .16s ease,color .16s ease}
+.btn:active:not(:disabled){transform:scale(.975)}
+.btn:hover:not(:disabled){background:#E2DED4}
 .btn:disabled{opacity:.35}
-.btn-primary{background:var(--ink);color:#fff}
-.btn-primary:hover:not(:disabled){background:#2C2A20}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover:not(:disabled){background:var(--red-deep)}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-ink:hover:not(:disabled){background:#2E2A24}
 .btn-wide{width:100%}
-.btn-sm{font-size:13px;padding:10px 16px}
+.btn-sm{font-size:13.5px;padding:11px 18px;font-weight:600}
 
-input[type=text],textarea{width:100%;font-family:var(--font);font-size:16px;padding:14px 16px;
-  border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--surface-2);color:var(--ink);transition:border-color .15s ease}
-input[type=text]:focus,textarea:focus{outline:none;border-color:var(--ink);background:#fff}
-textarea{min-height:150px;resize:vertical;font-family:var(--mono);font-size:14px;line-height:1.75}
+input[type=text]{width:100%;font-family:var(--font);font-size:16px;padding:15px 17px;border:1.5px solid var(--rule);
+  border-radius:13px;background:var(--card);color:var(--ink);transition:border-color .16s ease}
+input[type=text]:focus{outline:none;border-color:var(--red)}
+textarea{width:100%;font-family:var(--mono);font-size:14px;line-height:1.8;padding:15px 17px;min-height:180px;
+  border:1.5px solid var(--rule);border-radius:13px;background:var(--card);color:var(--ink);resize:vertical}
+textarea:focus{outline:none;border-color:var(--red)}
 ::placeholder{color:var(--ink-3)}
-.field{margin-bottom:12px}
-.field label{display:block;margin-bottom:6px}
+.field{margin-bottom:14px}
+.field label{display:block;margin-bottom:7px}
 
-.masthead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;padding:0 4px}
-.wordmark{font-weight:800;font-size:27px;letter-spacing:-.04em;line-height:1}
-.wordmark .dot{color:var(--accent)}
-
-/* ---- home tiles ---- */
-.tile{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px 18px;
-  background:var(--surface);border-radius:var(--r-md);margin-bottom:9px;box-shadow:var(--shadow);
-  transition:transform .12s ease,background .15s ease}
-.tile:hover{background:#FCFBF9}
-.tile:active{transform:scale(.985)}
-.tile .glyph{width:44px;height:44px;border-radius:13px;flex-shrink:0;display:grid;place-items:center;
-  font-size:19px;background:var(--surface-2)}
-.tile .tt{flex:1;min-width:0}
-.tile h3{font-size:15.5px;font-weight:600;letter-spacing:-.012em}
-.tile p{font-size:13px;color:var(--ink-2);line-height:1.45;margin-top:1px}
-.tile .chev{color:var(--ink-3);font-size:19px;flex-shrink:0}
-.sect-label{margin:20px 4px 9px}
-
-/* ---- lists ---- */
-.list{background:var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow);overflow:hidden;max-height:330px;overflow-y:auto}
-.list-item{display:flex;justify-content:space-between;gap:12px;align-items:center;width:100%;
-  padding:13px 17px;text-align:left;font-size:14.5px;border-bottom:1px solid var(--line)}
-.list-item:last-child{border-bottom:none}
-.list-item:hover{background:var(--surface-2)}
-.list-item .n{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);flex-shrink:0}
-.list-item.dim{opacity:.35;cursor:not-allowed}
-.list-item.dim:hover{background:transparent}
-
-/* ---- segmented ---- */
-.seg{display:flex;gap:5px;background:var(--surface-2);padding:5px;border-radius:14px;margin-bottom:14px}
-.seg button{flex:1;padding:10px 6px;border-radius:10px;font-size:13.5px;font-weight:600;letter-spacing:-.01em;
-  color:var(--ink-2);transition:background .15s ease,color .15s ease}
-.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(23,22,15,.12)}
-
-.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
-.chip{padding:9px 14px;border-radius:999px;font-family:var(--mono);font-size:12.5px;
-  background:var(--surface-2);color:var(--ink-3);border:1px solid transparent;transition:all .15s ease}
-.chip.on{background:var(--ink);color:#fff}
-.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
-.leg{display:flex;align-items:baseline;gap:5px;padding:5px 10px;border-radius:9px;background:var(--surface-2)}
-.leg .ll{font-family:var(--mono);font-size:11.5px;color:var(--ink)}
-.leg .lp{font-size:11px;color:var(--ink-3)}
-.h2h-col .ts{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin:-6px 0 8px}
-.names{display:flex;gap:9px;margin-top:9px}
-.names input{flex:1}
-.hint{font-size:12.5px;color:var(--ink-3);margin-top:9px;line-height:1.5}
-
-.status{font-size:13.5px;margin-top:12px;padding:11px 14px;border-radius:var(--r-sm);line-height:1.55}
-.status.err{background:rgba(220,74,30,.09);color:#9A3315}
-.status.ok{background:rgba(76,122,63,.11);color:#365828}
-.status.wait{background:var(--surface-2);color:var(--ink-2)}
+.status{font-size:14px;margin-top:14px;padding:13px 16px;border-radius:13px;line-height:1.55}
+.status.err{background:rgba(214,64,42,.1);color:#9A2B18}
+.status.ok{background:rgba(62,142,82,.12);color:#2C6B3C}
+.status.wait{background:var(--wash);color:var(--ink-2)}
 .status:empty{display:none}
-.textlink{font-size:13.5px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
-.textlink:hover{color:var(--ink)}
-.copyrow{display:flex;gap:8px}
-.copyrow input{flex:1;font-family:var(--mono);font-size:13px}
 
-/* ================= GAME ================= */
-.stage-card{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);
-  padding:20px 22px 26px;margin-bottom:11px;text-align:center;position:relative;overflow:hidden}
-.stage-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:4px}
-.stage-head .src{font-size:13px;font-weight:600;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.stage-head .pos{font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+/* segmented + chips */
+.seg{display:flex;gap:4px;background:var(--wash);padding:4px;border-radius:15px;flex-wrap:wrap}
+.seg button{flex:1;min-width:74px;padding:12px 8px;border-radius:11px;font-size:14px;font-weight:600;
+  color:var(--ink-2);text-align:center;transition:all .16s ease}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(20,18,16,.13)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{padding:11px 17px;border-radius:999px;font-family:var(--mono);font-size:13px;background:var(--wash);
+  color:var(--ink-2);transition:all .16s ease;text-align:center}
+.chip.on{background:var(--ink);color:#fff}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 0;border-top:1px solid var(--rule)}
+.opt .ot{font-size:16px;font-weight:600}
+.opt .od{font-size:13.5px;color:var(--ink-2);margin-top:2px;max-width:38ch}
+.sw{width:54px;height:32px;border-radius:999px;background:var(--rule);position:relative;flex-shrink:0;transition:background .2s ease}
+.sw i{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.24);transition:transform .22s cubic-bezier(.3,1.3,.5,1)}
+.sw.on{background:var(--green)}
+.sw.on i{transform:translateX(22px)}
+.count{display:flex;align-items:center;gap:5px}
+.count button{width:40px;height:40px;border-radius:50%;background:var(--wash);font-size:20px;font-weight:600;
+  display:grid;place-items:center;text-align:center}
+.count button:hover:not(:disabled){background:#E2DED4}
+.count .v{width:36px;text-align:center;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.leg{display:flex;gap:6px;align-items:baseline;padding:6px 11px;border-radius:9px;background:var(--wash)}
+.leg b{font-family:var(--mono);font-size:12px;font-weight:500}
+.leg span{font-size:11.5px;color:var(--ink-3)}
+.names{display:grid;gap:8px;margin-top:12px}
+.nrow{display:flex;align-items:center;gap:11px}
+.nrow .dot{width:13px;height:13px;border-radius:50%;flex-shrink:0}
 
-.player{position:relative;width:172px;height:172px;margin:14px auto 0}
+/* playlist list */
+.tools{display:flex;gap:8px;margin-bottom:12px}
+.tools input{flex:1}
+.list{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;max-height:400px;overflow-y:auto}
+.li{display:flex;justify-content:space-between;gap:14px;align-items:center;width:100%;padding:16px 19px;
+  border-bottom:1px solid var(--rule);transition:background .14s ease}
+.li:last-child{border-bottom:none}
+.li:hover{background:var(--wash)}
+.li .nm{font-size:15.5px;font-weight:600;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li .ct{font-family:var(--mono);font-size:12px;color:var(--ink-3);flex-shrink:0}
+.li.dim{opacity:.4}
+
+/* ============ GAME ============ */
+.deck{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:20px 22px 26px;
+  margin-bottom:12px;text-align:center;position:relative;overflow:hidden}
+.deck .band{position:absolute;top:0;left:0;right:0;height:5px;background:var(--red)}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
+.dhead .who{font-size:14px;font-weight:700;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dhead .pos{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);white-space:nowrap}
+.player{position:relative;width:186px;height:186px;margin:16px auto 0}
 .ring{position:absolute;inset:0;transform:rotate(-90deg)}
-.ring circle{fill:none;stroke-width:5;stroke-linecap:round}
-.ring .bg{stroke:var(--line)}
-.ring .fg{stroke:var(--accent);transition:stroke-dashoffset .05s linear}
-.play-circle{position:absolute;inset:16px;border-radius:50%;background:var(--ink);color:#fff;
-  display:grid;place-items:center;transition:transform .14s cubic-bezier(.3,1.4,.5,1),background .15s ease}
-.play-circle:hover:not(:disabled){background:#2C2A20}
-.play-circle:active:not(:disabled){transform:scale(.94)}
-.play-circle:disabled{background:var(--line-2)}
-.play-circle .ico{width:0;height:0;border-left:30px solid currentColor;border-top:19px solid transparent;
-  border-bottom:19px solid transparent;margin-left:8px}
-.play-circle.on .ico{border:none;width:26px;height:26px;border-radius:4px;background:currentColor;margin:0}
+.ring circle{fill:none;stroke-width:6;stroke-linecap:round}
+.ring .bg{stroke:var(--wash)}
+.ring .fg{stroke:var(--red)}
+.play{position:absolute;inset:18px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;
+  transition:transform .15s cubic-bezier(.3,1.4,.5,1),background .16s ease}
+.play:hover:not(:disabled){background:var(--red)}
+.play:active:not(:disabled){transform:scale(.94)}
+.play:disabled{background:var(--rule)}
+.play .i{width:0;height:0;border-left:32px solid currentColor;border-top:21px solid transparent;
+  border-bottom:21px solid transparent;margin-left:9px}
+.play.on .i{border:none;width:28px;height:28px;border-radius:5px;background:currentColor;margin:0}
+.clip{font-size:38px;font-weight:800;letter-spacing:-.04em;margin-top:20px;font-variant-numeric:tabular-nums}
+.worth{font-size:13.5px;color:var(--ink-2);margin-top:2px}
+.pills{display:flex;justify-content:center;gap:6px;margin-top:18px;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:11px;padding:6px 12px;border-radius:999px;background:var(--wash);color:var(--ink-3)}
+.pill.past{background:rgba(20,18,16,.11);color:var(--ink-2)}
+.pill.now{background:var(--red);color:#fff}
+.vol{display:flex;align-items:center;gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid var(--rule)}
+.vol .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase}
+.vol input[type=range]{flex:1;accent-color:var(--red);height:26px;cursor:pointer}
+.vol .pct{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);width:36px;text-align:right;font-variant-numeric:tabular-nums}
 
-.clip-len{font-size:31px;font-weight:700;letter-spacing:-.03em;margin-top:18px;font-variant-numeric:tabular-nums}
-.clip-cap{font-size:12.5px;color:var(--ink-3);margin-top:1px}
-.pills{display:flex;justify-content:center;gap:6px;margin-top:17px;flex-wrap:wrap}
-.pill{font-family:var(--mono);font-size:10.5px;padding:5px 10px;border-radius:999px;
-  background:var(--surface-2);color:var(--ink-3)}
-.pill.past{background:rgba(23,22,15,.1);color:var(--ink-2)}
-.pill.now{background:var(--accent);color:#fff}
-
-.attempts{display:grid;gap:6px;margin-bottom:11px}
-.att{display:flex;align-items:center;gap:11px;padding:12px 15px;border-radius:var(--r-sm);
-  background:var(--surface);box-shadow:0 1px 2px rgba(23,22,15,.05);min-height:46px;font-size:14.5px}
-.att.empty{background:transparent;box-shadow:none;border:1px dashed var(--line-2)}
-.att .m{width:17px;flex-shrink:0;font-size:13px;color:var(--ink-3);text-align:center}
+.atts{display:grid;gap:6px;margin-bottom:12px}
+.att{display:flex;align-items:center;gap:12px;padding:14px 17px;border-radius:14px;background:var(--card);
+  box-shadow:0 1px 2px rgba(20,18,16,.05);min-height:50px;font-size:15px}
+.att.empty{background:transparent;box-shadow:none;border:1.5px dashed var(--rule)}
+.att .m{width:18px;flex-shrink:0;font-size:14px;color:var(--ink-3);text-align:center}
 .att .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.att.wrong .m{color:var(--accent)}
-.att.wrong .t{color:var(--ink-2)}
+.att.wrong{background:rgba(214,64,42,.09)} .att.wrong .m{color:var(--red)}
 .att.skip .t{color:var(--ink-3);font-style:italic}
-.att.correct{background:rgba(76,122,63,.11);box-shadow:none}
-.att.correct .m{color:var(--green)}
+.att.correct{background:rgba(62,142,82,.13)} .att.correct .m{color:var(--green)}
 
-.guess-wrap{position:relative}
-.suggest{position:absolute;bottom:calc(100% + 7px);left:0;right:0;max-height:250px;overflow-y:auto;z-index:30;
-  background:var(--surface);border-radius:var(--r-md);box-shadow:0 4px 30px rgba(23,22,15,.19);display:none;padding:5px}
-.suggest.open{display:block}
-.suggest li{list-style:none;padding:11px 13px;font-size:14.5px;cursor:pointer;border-radius:10px;line-height:1.3}
-.suggest li .a{color:var(--ink-3);font-size:12.5px;display:block}
-.suggest li.hi{background:var(--ink);color:#fff}
-.suggest li.hi .a{color:rgba(255,255,255,.65)}
-.suggest .none{padding:13px;font-size:13.5px;color:var(--ink-3);cursor:default}
-.acts{display:flex;gap:8px;margin-top:9px}
+.gwrap{position:relative}
+.sug{position:absolute;bottom:calc(100% + 8px);left:0;right:0;max-height:270px;overflow-y:auto;z-index:40;
+  background:var(--card);border-radius:16px;box-shadow:0 6px 40px rgba(20,18,16,.22);display:none;padding:6px}
+.sug.open{display:block}
+.sug li{list-style:none;padding:12px 14px;font-size:15px;cursor:pointer;border-radius:11px;line-height:1.25}
+.sug li .a{color:var(--ink-3);font-size:13px;display:block;margin-top:1px}
+.sug li.hi{background:var(--ink);color:#fff}
+.sug li.hi .a{color:rgba(255,255,255,.62)}
+.sug .no{padding:14px;font-size:14px;color:var(--ink-3);cursor:default}
+.acts{display:flex;gap:8px;margin-top:10px}
 .acts .btn{flex:1}
 
-/* reveal */
-.reveal{text-align:center;padding:24px 22px 22px}
-.verdict{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-bottom:15px}
-.verdict.win{color:var(--green)}
-.verdict.lose{color:var(--accent)}
-.art{width:132px;height:132px;border-radius:16px;margin:0 auto 15px;display:block;background:var(--surface-2);
-  object-fit:cover;box-shadow:0 6px 22px -6px rgba(23,22,15,.35)}
-.reveal h3{font-size:21px;font-weight:700;letter-spacing:-.024em;line-height:1.22}
-.reveal .by{color:var(--ink-2);font-size:15px;margin-top:3px}
-.sq{font-size:17px;letter-spacing:3px;margin:16px 0 2px}
-.link-out{display:inline-block;margin-top:11px;font-size:13px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+.reveal{text-align:center;padding:28px 24px 24px}
+.verdict{font-family:var(--mono);font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3);margin-bottom:16px}
+.verdict.win{color:var(--green)} .verdict.lose{color:var(--red)}
+.art{width:148px;height:148px;border-radius:18px;margin:0 auto 17px;display:block;background:var(--wash);
+  object-fit:cover;box-shadow:0 10px 30px -8px rgba(20,18,16,.4)}
+.reveal h3{font-size:23px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+.reveal .by{color:var(--ink-2);font-size:16px;margin-top:4px}
+.sq{font-size:18px;letter-spacing:3px;margin:18px 0 2px}
+.lo{display:inline-block;margin-top:12px;font-size:13.5px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+.rail{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:4px 4px;flex-wrap:wrap;margin-top:12px}
+.rail .st{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+.rail .grp{display:flex;gap:16px}
+.rail button{font-size:13.5px;color:var(--ink-2);font-weight:600}
+.rail button:hover{color:var(--red)}
+.note{font-size:13px;line-height:1.6;color:var(--ink-2);background:var(--wash);border-radius:13px;padding:13px 16px;margin-top:12px}
 
-.bigscore{font-size:52px;font-weight:800;letter-spacing:-.045em;line-height:1;margin:8px 0 2px;font-variant-numeric:tabular-nums}
-.bigscore small{font-size:20px;font-weight:600;color:var(--ink-3);letter-spacing:-.02em}
-.tally{margin-top:20px;text-align:left}
-.tally-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
-.tally-row .s{font-size:12px;letter-spacing:2px;flex-shrink:0}
-.tally-row .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tally-row .pt{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);flex-shrink:0}
-.h2h{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;text-align:left}
-.h2h-col{border-radius:var(--r-md);padding:15px;background:var(--surface-2)}
-.h2h-col.win{background:rgba(76,122,63,.13)}
-.h2h-col h4{font-size:14.5px;font-weight:600}
-.h2h-col .t{font-size:23px;font-weight:700;letter-spacing:-.03em;margin:3px 0 8px;font-variant-numeric:tabular-nums}
-.h2h-col .s{font-size:11.5px;letter-spacing:2px;line-height:2}
+/* pass */
+.pass{text-align:center;padding:52px 26px}
+.pass .nm{font-size:clamp(38px,10vw,58px);font-weight:900;letter-spacing:-.05em;line-height:1;margin-bottom:10px}
+.pass .sb{font-size:16px;color:var(--ink-2);margin-bottom:30px}
+.stand{display:flex;flex-direction:column;gap:7px;margin-top:26px;text-align:left}
+.srow{display:flex;align-items:center;gap:11px;font-size:14px;padding:9px 13px;border-radius:11px;background:var(--wash)}
+.srow.out{opacity:.42}
+.srow .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.srow .n{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .p{font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
 
-.pass{text-align:center;padding:44px 24px}
-.pass .who{font-size:31px;font-weight:800;letter-spacing:-.035em;margin-bottom:6px}
-.pass .sub{font-size:14.5px;color:var(--ink-2);margin-bottom:26px}
-.pass .clock{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:16px}
-
-.rail{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:2px 6px;flex-wrap:wrap}
-.rail .stats{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.04em}
-.rail button{font-size:13px;color:var(--ink-2)}
-.rail button:hover{color:var(--ink)}
-.rail .grp{display:flex;gap:14px}
-.notice{font-size:12.5px;line-height:1.6;color:var(--ink-2);background:var(--surface-2);
-  border-radius:var(--r-sm);padding:11px 14px;margin-top:12px}
-.hidden{display:none !important}
-
-.spin{display:inline-block;width:15px;height:15px;border:2px solid var(--line-2);border-top-color:var(--ink);
-  border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px;margin-right:8px}
+/* summary */
+.big-num{font-size:74px;font-weight:900;letter-spacing:-.055em;line-height:1;margin:10px 0 2px;font-variant-numeric:tabular-nums}
+.big-num small{font-size:26px;font-weight:700;color:var(--ink-3)}
+.tally{margin-top:24px;text-align:left}
+.trow{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--rule);font-size:14px}
+.trow .s{font-size:13px;letter-spacing:2px;flex-shrink:0}
+.trow .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow .p{font-family:var(--mono);font-size:12px;color:var(--ink-3);flex-shrink:0}
+.board{display:flex;flex-direction:column;gap:9px;margin-top:24px;text-align:left}
+.brow{display:flex;align-items:center;gap:13px;padding:15px 17px;border-radius:15px;background:var(--wash)}
+.brow.first{background:rgba(62,142,82,.15)}
+.brow.out{opacity:.5}
+.brow .rk{font-family:var(--mono);font-size:13px;color:var(--ink-3);width:18px;flex-shrink:0}
+.brow .dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.brow .n{flex:1;font-size:16px;font-weight:700;letter-spacing:-.015em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brow .n em{display:block;font-style:normal;font-family:var(--mono);font-size:11px;color:var(--ink-3);font-weight:400;margin-top:2px}
+.brow .p{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.spin{display:inline-block;width:17px;height:17px;border:2.5px solid var(--rule);border-top-color:var(--red);
+  border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px}
 @keyframes sp{to{transform:rotate(360deg)}}
-@media (max-width:480px){
-  .player{width:150px;height:150px}
-  .clip-len{font-size:27px}
-  .h2h{grid-template-columns:1fr}
+.hidden{display:none !important}
+@media (max-width:470px){
+  .player{width:162px;height:162px}
+  .clip{font-size:33px}
+  .acts{flex-wrap:wrap}
 }
-@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation-duration:.01ms !important}}
 </style>
 </head>
-<body>
-<div class="shell">
+<body class="locked">
 
+<div id="splash">
+  <div class="bars"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="mid">
+    <div class="word" id="sword"></div>
+    <div class="tag">Name the track</div>
+  </div>
+  <div class="num" id="snum">000</div>
+  <button class="skip" id="sskip">Skip</button>
+</div>
+
+<div class="shell">
   <div class="masthead">
-    <div class="wordmark">Intro<span class="dot">.</span></div>
-    <button class="btn btn-sm hidden" id="home-btn">Home</button>
+    <div class="wordmark">Intro<i>.</i></div>
+    <button class="back hidden" id="back">&larr; Back</button>
   </div>
 
-  <!-- ===== HOME ===== -->
+  <!-- HOME -->
   <section id="s-home">
-    <div class="eyebrow sect-label">Choose your music</div>
-    <button class="tile" id="tile-spotify">
-      <span class="glyph">&#9835;</span>
-      <span class="tt"><h3>A Spotify playlist</h3><p>One-time setup on Spotify's side. Reads playlists you own.</p></span>
-      <span class="chev">&#8250;</span>
+    <h1 class="page">Where are<br>the songs from?</h1>
+    <p class="lede">Guess tracks from a couple of seconds of audio. Play alone or pass the phone around.</p>
+    <button class="big" id="go-spotify">
+      <span class="row"><span><h2>My Spotify library</h2><p>Sign in and pick any playlist you own.</p></span><span class="arw">&rarr;</span></span>
     </button>
-    <button class="tile" id="tile-manual">
-      <span class="glyph">&#9997;</span>
-      <span class="tt"><h3>Paste a song list</h3><p>One <code>Artist - Title</code> per line. Works anywhere, no account.</p></span>
-      <span class="chev">&#8250;</span>
+    <button class="big" id="go-paste">
+      <span class="row"><span><h2>A pasted list</h2><p>Plain text or a CSV export. No account needed.</p></span><span class="arw">&rarr;</span></span>
     </button>
-
-    <div class="card hidden" id="manual-card" style="margin-top:12px">
-      <h2>Paste a song list</h2>
-      <p class="sub">One song per line as <code>Artist - Title</code>. A CSV export from a playlist tool also works &mdash; paste the whole thing, headers included, and the track and artist columns get picked up.</p>
-      <textarea id="manual-text" spellcheck="false" placeholder="Fleetwood Mac - Dreams&#10;Talking Heads - Once in a Lifetime&#10;Sade - Smooth Operator"></textarea>
-      <button class="btn btn-primary btn-wide" id="manual-go" style="margin-top:11px">Use this list</button>
-      <div class="status" id="manual-status"></div>
-    </div>
   </section>
 
-  <!-- ===== SPOTIFY CONNECT ===== -->
+  <!-- PASTE -->
+  <section id="s-paste" class="hidden">
+    <h1 class="page">Paste a list</h1>
+    <p class="lede">One song per line as Artist - Title, or a CSV export with its header row.</p>
+    <textarea id="ptext" spellcheck="false" placeholder="Fleetwood Mac - Dreams&#10;Talking Heads - Once in a Lifetime&#10;Sade - Smooth Operator"></textarea>
+    <button class="btn btn-red btn-wide" id="pgo" style="margin-top:14px">Use this list</button>
+    <div class="status" id="pstatus"></div>
+  </section>
+
+  <!-- CONNECT -->
   <section id="s-connect" class="hidden">
-    <div class="card">
-      <h2>Connect Spotify</h2>
-      <p class="sub">Spotify requires each person to register their own app key. It takes about two minutes and you only do it once.</p>
-      <div class="field">
-        <label class="eyebrow" for="redir">1. Redirect URI &mdash; must match your dashboard character for character</label>
-        <div class="copyrow">
-          <input type="text" id="redir" spellcheck="false" autocomplete="off">
-          <button class="btn btn-sm" id="copy-redir">Copy</button>
-        </div>
-        <div class="hint" id="redir-warn"></div>
-      </div>
-      <div class="field">
-        <label class="eyebrow" for="cid">2. Paste your Client ID</label>
-        <input type="text" id="cid" autocomplete="off" spellcheck="false" placeholder="32 characters">
-      </div>
-      <button class="btn btn-primary btn-wide" id="connect-btn">Connect</button>
-      <div class="status" id="connect-status"></div>
-      <details style="margin-top:16px">
-        <summary>It says insecure or invalid redirect URI</summary>
-        <ul>
-          <li><b>Save this file as <code>index.html</code></b> and open <code>http://127.0.0.1:8080/</code>. Then the redirect is just the address with no filename, which is the shape Spotify's validator is happiest with.</li>
-          <li><b>Avoid hyphens in the path.</b> The dashboard's validator has a long-standing bug where a hyphen anywhere in the path of a loopback URI makes the Add button refuse to work. <code>intro-game.html</code> will not save; <code>index.html</code> will.</li>
-          <li><b>Never use <code>localhost</code>.</b> Spotify removed support for it in November 2025. Only the literal <code>127.0.0.1</code> works, and your browser must show 127.0.0.1 in the bar too.</li>
-          <li><b>Always include the port.</b> Bare <code>http://127.0.0.1</code> is rejected by the dashboard even though the docs say it should work.</li>
-          <li><b>The match is exact</b>, trailing slash included. If the dashboard only accepted a slightly different string, paste that exact string into the box above and the app will use it.</li>
-        </ul>
-      </details>
-      <details>
-        <summary>I would rather not run a local server</summary>
-        <ul>
-          <li>Put this one file in a GitHub repo and turn on Pages. You get a permanent <code>https://</code> address, which Spotify accepts without any of the loopback caveats, and it works from your phone too.</li>
-          <li>Any static host works the same way: Netlify Drop, Cloudflare Pages, Vercel.</li>
-          <li>Or skip Spotify entirely and use the paste option on the home screen. It takes a CSV export as well as plain text.</li>
-        </ul>
-      </details>
-      <div class="notice">
-        The account that owns the app needs Spotify Premium, and only playlists you own or collaborate on can be read. Both rules landed in Spotify's March 2026 changes and neither has a workaround.
+    <h1 class="page">Sign in</h1>
+    <p class="lede" id="clede">Intro reads the playlists on your account. Nothing is changed and nothing is stored.</p>
+    <div class="field hidden" id="cidwrap">
+      <label class="eyebrow" for="cid">Spotify Client ID</label>
+      <input type="text" id="cid" autocomplete="off" spellcheck="false" placeholder="From your Spotify developer dashboard">
+      <div class="note" id="rednote"></div>
+    </div>
+    <button class="btn btn-red btn-wide" id="connect">Continue with Spotify</button>
+    <div class="status" id="cstatus"></div>
+  </section>
+
+  <!-- LIBRARY -->
+  <section id="s-lib" class="hidden">
+    <h1 class="page">Your playlists</h1>
+    <p class="lede" id="libcount">&nbsp;</p>
+    <div class="tools">
+      <input type="text" id="pfilter" placeholder="Search" autocomplete="off">
+      <button class="btn btn-sm" id="psort">A&ndash;Z</button>
+    </div>
+    <div class="list" id="plist"></div>
+    <div class="status" id="lstatus"></div>
+    <div class="field" style="margin-top:18px">
+      <label class="eyebrow" for="plink">Not listed? Paste its link</label>
+      <div class="tools">
+        <input type="text" id="plink" placeholder="https://open.spotify.com/playlist/..." autocomplete="off">
+        <button class="btn btn-sm btn-ink" id="pload">Load</button>
       </div>
     </div>
   </section>
 
-  <!-- ===== PLAYLIST PICK ===== -->
-  <section id="s-pick" class="hidden">
-    <div class="card">
-      <h2>Your playlists</h2>
-      <p class="sub">Playlists you own or collaborate on. Under 10 tracks is greyed out.</p>
-      <div class="field"><input type="text" id="pl-filter" placeholder="Filter by name…" autocomplete="off"></div>
-      <div class="list" id="pl-list"></div>
-      <div class="status" id="pick-status"></div>
-    </div>
-    <div class="rail"><span class="stats" id="who">—</span><button id="signout-btn">Sign out</button></div>
-  </section>
-
-  <!-- ===== SETUP ===== -->
+  <!-- SETUP -->
   <section id="s-setup" class="hidden">
+    <h1 class="page" id="sname">&nbsp;</h1>
+    <p class="lede" id="ssub">&nbsp;</p>
+
     <div class="card">
-      <h2 id="setup-title">—</h2>
-      <p class="sub" id="setup-sub">—</p>
-
-      <div class="eyebrow" style="margin-bottom:8px">Format</div>
-      <div class="seg" id="seg-mode">
-        <button data-mode="endless" class="on">Endless</button>
-        <button data-mode="five">5 songs</button>
-        <button data-mode="ten">10 songs</button>
-        <button data-mode="h2h">Head to head</button>
+      <div class="eyebrow" style="margin-bottom:10px">Format</div>
+      <div class="seg" id="segmode">
+        <button data-m="endless" class="on">Endless</button>
+        <button data-m="five">5 songs</button>
+        <button data-m="ten">10 songs</button>
+        <button data-m="party">Party</button>
       </div>
 
-      <div id="names-box" class="hidden">
-        <div class="names">
-          <input type="text" id="p1" placeholder="Player 1" autocomplete="off" maxlength="14">
-          <input type="text" id="p2" placeholder="Player 2" autocomplete="off" maxlength="14">
+      <div id="partybox" class="hidden">
+        <div class="opt">
+          <span><span class="ot">Players</span><span class="od">Everyone gets their own songs and takes turns.</span></span>
+          <span class="count"><button id="pminus">&minus;</button><span class="v" id="pcount">2</span><button id="pplus">+</button></span>
         </div>
-        <p class="hint">Five songs each, taking turns. Miss one and you are out, though the round always finishes so both players face the same number of songs. Survive all five and the higher score wins, with total time breaking a tie.</p>
+        <div class="opt">
+          <span><span class="ot">Knockout</span><span class="od">Miss one and you are out. Last player standing wins.</span></span>
+          <button class="sw on" id="swko"><i></i></button>
+        </div>
+        <div class="eyebrow" style="margin:18px 0 9px">Songs each</div>
+        <div class="chips" id="eachchips"></div>
+        <div class="names" id="names"></div>
       </div>
 
-      <div class="eyebrow" style="margin:20px 0 8px">Let it run up to</div>
-      <div class="chips" id="chips"></div>
-      <div class="legend" id="legend"></div>
-      <p class="hint">Every wrong guess or skip unlocks the next length. Points are fixed per length, so naming a track at 1 second always beats naming it at 5.</p>
+      <div class="opt">
+        <span><span class="ot">Random start</span><span class="od">Drop in at an unpredictable point instead of the opening bar.</span></span>
+        <button class="sw" id="swrand"><i></i></button>
+      </div>
 
-      <button class="btn btn-primary btn-wide" id="start-btn" style="margin-top:22px">Start</button>
-      <div class="status" id="setup-status"></div>
+      <div class="eyebrow" style="margin:20px 0 9px">Let it run up to</div>
+      <div class="chips" id="capchips"></div>
+      <div class="legend" id="legend"></div>
+
+      <button class="btn btn-red btn-wide" id="start" style="margin-top:26px">Start</button>
+      <div class="status" id="sstatus"></div>
     </div>
-    <div class="rail"><span class="stats" id="setup-src">—</span><button id="back-home">Change music</button></div>
   </section>
 
-  <!-- ===== PASS ===== -->
+  <!-- PASS -->
   <section id="s-pass" class="hidden">
     <div class="card pass">
-      <div class="who" id="pass-who">—</div>
-      <div class="sub" id="pass-sub">—</div>
-      <button class="btn btn-primary btn-wide" id="pass-btn">Start my turn</button>
-      <div class="clock" id="pass-clock">—</div>
+      <div class="nm" id="pnm">&nbsp;</div>
+      <div class="sb" id="psb">&nbsp;</div>
+      <button class="btn btn-ink btn-wide" id="pbtn">Start my turn</button>
+      <div class="stand" id="stand"></div>
     </div>
   </section>
 
-  <!-- ===== GAME ===== -->
+  <!-- GAME -->
   <section id="s-game" class="hidden">
-    <div class="stage-card">
-      <div class="stage-head">
-        <span class="src" id="g-src">—</span>
-        <span class="pos" id="g-pos">—</span>
-      </div>
+    <div class="deck">
+      <div class="band" id="band"></div>
+      <div class="dhead"><span class="who" id="gwho">&nbsp;</span><span class="pos" id="gpos">&nbsp;</span></div>
       <div class="player">
-        <svg class="ring" viewBox="0 0 172 172" aria-hidden="true">
-          <circle class="bg" cx="86" cy="86" r="80"></circle>
-          <circle class="fg" id="ring-fg" cx="86" cy="86" r="80"></circle>
+        <svg class="ring" viewBox="0 0 186 186" aria-hidden="true">
+          <circle class="bg" cx="93" cy="93" r="86"></circle>
+          <circle class="fg" id="rfg" cx="93" cy="93" r="86"></circle>
         </svg>
-        <button class="play-circle" id="play-btn" aria-label="Play clip"><span class="ico"></span></button>
+        <button class="play" id="play" aria-label="Play clip"><span class="i"></span></button>
       </div>
-      <div class="clip-len" id="clip-len">—</div>
-      <div class="clip-cap" id="clip-cap">of the track unlocked</div>
+      <div class="clip" id="clip">&nbsp;</div>
+      <div class="worth" id="worth">&nbsp;</div>
       <div class="pills" id="pills"></div>
+      <div class="vol">
+        <span class="lab">Vol</span>
+        <input type="range" id="vol" min="0" max="100" value="80" aria-label="Volume">
+        <span class="pct" id="volpct">80</span>
+      </div>
     </div>
 
-    <div class="attempts" id="attempts"></div>
+    <div class="atts" id="atts"></div>
 
-    <div id="input-area">
-      <div class="guess-wrap">
-        <ul class="suggest" id="suggest"></ul>
-        <input type="text" id="guess" autocomplete="off" spellcheck="false" placeholder="Search for a song…">
+    <div id="inputarea">
+      <div class="gwrap">
+        <ul class="sug" id="sug"></ul>
+        <input type="text" id="guess" autocomplete="off" spellcheck="false" placeholder="Search for a song">
       </div>
       <div class="acts">
-        <button class="btn" id="skip-btn">Skip</button>
-        <button class="btn btn-primary" id="submit-btn" disabled>Submit</button>
+        <button class="btn" id="skip">Skip</button>
+        <button class="btn btn-red" id="submit" disabled>Submit</button>
       </div>
     </div>
 
     <div class="card reveal hidden" id="reveal">
       <div class="verdict" id="verdict"></div>
-      <img class="art" id="art" alt="" width="132" height="132">
-      <h3 id="rv-title"></h3>
-      <div class="by" id="rv-artist"></div>
-      <div class="sq" id="rv-sq"></div>
-      <a class="link-out hidden" id="rv-link" href="#" target="_blank" rel="noopener">Open in Spotify</a>
-      <button class="btn btn-primary btn-wide" id="next-btn" style="margin-top:17px">Next song</button>
+      <img class="art" id="art" alt="" width="148" height="148">
+      <h3 id="rtitle"></h3>
+      <div class="by" id="rartist"></div>
+      <div class="sq" id="rsq"></div>
+      <a class="lo hidden" id="rlink" href="#" target="_blank" rel="noopener">Open in Spotify</a>
+      <button class="btn btn-red btn-wide" id="next" style="margin-top:20px">Next song</button>
     </div>
 
-    <div class="rail" style="margin-top:11px">
-      <span class="stats" id="run-stats">—</span>
+    <div class="rail">
+      <span class="st" id="rstats">&nbsp;</span>
       <span class="grp">
-        <button id="reroll-btn" class="hidden">Reroll</button>
-        <button id="quit-btn">End run</button>
+        <button id="reroll" class="hidden">Reroll</button>
+        <button id="quit">End run</button>
       </span>
     </div>
-    <div class="notice hidden" id="notice"></div>
+    <div class="note hidden" id="note"></div>
   </section>
 
-  <!-- ===== SUMMARY ===== -->
-  <section id="s-summary" class="hidden">
+  <!-- SUMMARY -->
+  <section id="s-sum" class="hidden">
     <div class="card reveal" id="sum"></div>
     <div class="acts">
-      <button class="btn" id="sum-copy">Copy result</button>
-      <button class="btn" id="sum-setup">Change format</button>
-      <button class="btn btn-primary" id="sum-again">Play again</button>
+      <button class="btn" id="scopy">Copy result</button>
+      <button class="btn" id="ssetup">Change format</button>
+      <button class="btn btn-red" id="sagain">Play again</button>
     </div>
   </section>
-
 </div>
 
 <audio id="au" preload="auto"></audio>
@@ -421,65 +458,116 @@ textarea{min-height:150px;resize:vertical;font-family:var(--mono);font-size:14px
 (function(){
 'use strict';
 
-var $ = function(id){ return document.getElementById(id); };
-var HERE = location.origin + location.pathname;
-var REDIRECT = HERE;
-var SCOPES = 'playlist-read-private playlist-read-collaborative';
+/* ══════════════════════════════════════════════════════════════
+   CONFIG
 
-/* Clip ladder. Points are fixed per length, so naming a track at 1s always
-   beats naming it at 5s no matter where you cap the run. */
-var LADDER = [
-  {ms:100,   label:'0.1s', pts:6},
-  {ms:1000,  label:'1s',   pts:5},
-  {ms:2000,  label:'2s',   pts:4},
-  {ms:5000,  label:'5s',   pts:3},
-  {ms:10000, label:'10s',  pts:2},
-  {ms:15000, label:'15s',  pts:1}
+   Put your Spotify Client ID here and everyone who opens the site
+   gets a one-tap "Continue with Spotify" button with no developer
+   setup of their own.
+
+   Spotify allows five people total on a development-mode app, you
+   included. Add each one under Dashboard > your app > Settings >
+   User Management, by name and Spotify email. Anyone not on that
+   list can sign in but every request comes back 403.
+
+   Leave it empty and the app asks each visitor for their own ID.
+   ══════════════════════════════════════════════════════════════ */
+var CLIENT_ID = '';
+
+var $=function(i){ return document.getElementById(i); };
+var HERE=location.origin+location.pathname;
+var SCOPES='playlist-read-private playlist-read-collaborative';
+
+var LADDER=[
+  {ms:100,label:'0.1s',pts:6},{ms:1000,label:'1s',pts:5},{ms:2000,label:'2s',pts:4},
+  {ms:5000,label:'5s',pts:3},{ms:10000,label:'10s',pts:2},{ms:15000,label:'15s',pts:1}
 ];
-var MAX_PTS = 6;
-var CAPS = [1000, 2000, 5000, 10000, 15000];
-function stages(){ return LADDER.filter(function(s){ return s.ms <= S.cap; }); }
-function totalPts(p){ return p.results.reduce(function(a,r){ return a+r.points; }, 0); }
+var MAX_PTS=6, CAPS=[1000,2000,5000,10000,15000], EACH=[3,5,10];
+var COL=['#D6402A','#2D6BE0','#E5A50A','#3E8E52','#8A4FD1','#1E9B96','#D2547E','#7A6A55'];
 
-var S = {
-  clientId:'', token:'', refresh:'', tokenExp:0, meId:'', meName:'',
-  playlists:[], sourceName:'', sourceKind:'list', tracks:[], cap:15000,
-  mode:'endless', setLen:0, players:[], turnIdx:0,
-  current:null, stage:0, guesses:[], over:false, won:false, roundStart:0,
-  selected:null, hi:-1, filtered:[], best:0
+var S={
+  clientId:CLIENT_ID, token:'', refresh:'', tokenExp:0, meId:'', meName:'',
+  playlists:[], sort:'az', sourceName:'', tracks:[],
+  mode:'endless', cap:15000, knockout:true, randomStart:false, seats:2, each:5,
+  players:[], round:0, seat:0, order:[],
+  current:null, stage:0, guesses:[], over:false, offset:0, roundStart:0,
+  selected:null, hi:-1, filtered:[], best:0, vol:0.8
 };
+function stages(){ return LADDER.filter(function(s){ return s.ms<=S.cap; }); }
+function totalPts(p){ return p.results.reduce(function(a,r){ return a+r.points; },0); }
 
-/* ---------- storage ---------- */
-function memGet(k){
-  try{ if(window.storage && window.storage.get)
+/* ───────── storage ───────── */
+function mget(k){
+  try{ if(window.storage&&window.storage.get)
     return window.storage.get(k).then(function(r){ return r?JSON.parse(r.value):null; }).catch(function(){ return null; });
   }catch(e){}
   try{ var v=localStorage.getItem(k); return Promise.resolve(v?JSON.parse(v):null); }catch(e){ return Promise.resolve(null); }
 }
-function memSet(k,v){
-  try{ if(window.storage && window.storage.set) return window.storage.set(k, JSON.stringify(v)).catch(function(){}); }catch(e){}
-  try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){}
+function mset(k,v){
+  try{ if(window.storage&&window.storage.set) return window.storage.set(k,JSON.stringify(v)).catch(function(){}); }catch(e){}
+  try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){}
   return Promise.resolve();
 }
 function ses(k,v){ try{ if(v===undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k,v); }catch(e){ return null; } }
 
-var SCREENS=['s-home','s-connect','s-pick','s-setup','s-pass','s-game','s-summary'];
+var SCREENS=['s-home','s-paste','s-connect','s-lib','s-setup','s-pass','s-game','s-sum'];
+var BACKS={'s-paste':'s-home','s-connect':'s-home','s-lib':'s-home','s-setup':null};
 function show(id){
-  SCREENS.forEach(function(s){ $(s).classList.toggle('hidden', s!==id); });
-  $('home-btn').classList.toggle('hidden', id==='s-home');
+  SCREENS.forEach(function(s){ $(s).classList.toggle('hidden',s!==id); });
+  var b=BACKS[id]!==undefined?BACKS[id]:null;
+  if(id==='s-setup') b=S.sourceKind==='spotify'?'s-lib':'s-paste';
+  $('back').classList.toggle('hidden',!b);
+  $('back').dataset.to=b||'';
   window.scrollTo(0,0);
 }
+function status(i,m,k){ var e=$(i); e.textContent=m||''; e.className='status'+(k?' '+k:''); }
+function esc(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+function fmt(ms){ var s=Math.round(ms/1000); return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
 
-/* ---------- audio: Apple preview clips, precisely cut ---------- */
-var AU = { el:null, cache:{}, playing:false, limit:0, raf:0, timer:0, t0:0, ready:false };
+/* ───────── splash ───────── */
+(function(){
+  var w=$('sword'), t='Intro.';
+  for(var i=0;i<t.length;i++){
+    var sp=document.createElement('span');
+    sp.textContent=t[i]===' '?'\u00A0':t[i];
+    sp.style.animationDelay=(i*0.055)+'s';
+    w.appendChild(sp);
+  }
+  var n=0, done=false;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var tick=setInterval(function(){
+    n=Math.min(100,n+Math.random()*13+5);
+    $('snum').textContent=('00'+Math.floor(n)).slice(-3);
+    if(n>=100){ clearInterval(tick); setTimeout(finish,240); }
+  },70);
+  function finish(){
+    if(done) return; done=true;
+    clearInterval(tick);
+    var bars=$('splash').querySelectorAll('.bars i');
+    Array.prototype.forEach.call(bars,function(b,i){ b.style.transitionDelay=(i*0.055)+'s'; });
+    $('splash').classList.add('go');
+    document.body.classList.remove('locked');
+    setTimeout(function(){ $('splash').classList.add('done'); },1200);
+  }
+  $('sskip').addEventListener('click',finish);
+  $('splash').addEventListener('click',finish);
+  document.addEventListener('keydown',function k(e){ if(!done){ finish(); } document.removeEventListener('keydown',k); });
+  if(reduce) finish();
+})();
+
+/* ───────── audio ───────── */
+var AU={el:null,cache:{},playing:false,limit:0,raf:0,timer:0,t0:0,dur:30};
+var C=2*Math.PI*86;
+function ringInit(){ $('rfg').style.strokeDasharray=C; setRing(0); }
+function setRing(p){ $('rfg').style.strokeDashoffset=C*(1-p); }
 
 function jsonp(url){
   return new Promise(function(res,rej){
-    var cb='itcb'+Math.random().toString(36).slice(2), s=document.createElement('script');
-    var timer=setTimeout(function(){ clean(); rej(new Error('timeout')); },9000);
-    function clean(){ try{ delete window[cb]; }catch(e){ window[cb]=undefined; } if(s.parentNode) s.parentNode.removeChild(s); }
-    window[cb]=function(d){ clearTimeout(timer); clean(); res(d); };
-    s.onerror=function(){ clearTimeout(timer); clean(); rej(new Error('blocked')); };
+    var cb='ic'+Math.random().toString(36).slice(2), s=document.createElement('script');
+    var t=setTimeout(function(){ cl(); rej(new Error('timeout')); },9000);
+    function cl(){ try{ delete window[cb]; }catch(e){ window[cb]=undefined; } if(s.parentNode) s.parentNode.removeChild(s); }
+    window[cb]=function(d){ clearTimeout(t); cl(); res(d); };
+    s.onerror=function(){ clearTimeout(t); cl(); rej(new Error('blocked')); };
     s.src=url+'&callback='+cb;
     document.head.appendChild(s);
   });
@@ -489,86 +577,77 @@ function norm(s){
     .replace(/[^a-z0-9\u00e0-\u00ff ]/g,' ').replace(/\s+/g,' ').trim();
 }
 function findClip(t){
-  if(AU.cache[t.id] !== undefined) return Promise.resolve(AU.cache[t.id]);
-  return jsonp('https://itunes.apple.com/search?media=music&entity=song&limit=8&term=' +
+  if(AU.cache[t.id]!==undefined) return Promise.resolve(AU.cache[t.id]);
+  return jsonp('https://itunes.apple.com/search?media=music&entity=song&limit=8&term='+
       encodeURIComponent(t.artists[0]+' '+t.name))
     .then(function(r){
-      var rs=(r&&r.results)||[], wn=norm(t.name), wa=norm(t.artists[0]), best=null, i, x;
-      for(i=0;i<rs.length;i++){ x=rs[i];
-        if(x.previewUrl && norm(x.trackName)===wn && norm(x.artistName).indexOf(wa)>=0){ best=x; break; } }
-      if(!best) for(i=0;i<rs.length;i++){ if(rs[i].previewUrl && norm(rs[i].trackName)===wn){ best=rs[i]; break; } }
-      if(!best) for(i=0;i<rs.length;i++){ if(rs[i].previewUrl){ best=rs[i]; break; } }
-      if(!best){ AU.cache[t.id]=null; return null; }
-      AU.cache[t.id]=best.previewUrl;
-      if(!t.art && best.artworkUrl100) t.art=best.artworkUrl100.replace('100x100','400x400');
-      return best.previewUrl;
+      var rs=(r&&r.results)||[], wn=norm(t.name), wa=norm(t.artists[0]), b=null, i;
+      for(i=0;i<rs.length;i++) if(rs[i].previewUrl&&norm(rs[i].trackName)===wn&&norm(rs[i].artistName).indexOf(wa)>=0){ b=rs[i]; break; }
+      if(!b) for(i=0;i<rs.length;i++) if(rs[i].previewUrl&&norm(rs[i].trackName)===wn){ b=rs[i]; break; }
+      if(!b) for(i=0;i<rs.length;i++) if(rs[i].previewUrl){ b=rs[i]; break; }
+      if(!b){ AU.cache[t.id]=null; return null; }
+      AU.cache[t.id]=b.previewUrl;
+      if(!t.art&&b.artworkUrl100) t.art=b.artworkUrl100.replace('100x100','400x400');
+      return b.previewUrl;
     }).catch(function(){ return null; });
 }
-
 function loadClip(url){
-  AU.ready=false;
   return new Promise(function(res){
-    var el=AU.el;
-    var done=function(){ el.removeEventListener('canplaythrough',done); AU.ready=true; res(true); };
-    el.addEventListener('canplaythrough',done);
+    var el=AU.el, fired=false;
+    var ok=function(){ if(fired) return; fired=true; el.removeEventListener('canplaythrough',ok); AU.dur=el.duration||30; res(); };
+    el.addEventListener('canplaythrough',ok);
     el.src=url; el.load();
-    setTimeout(function(){ if(!AU.ready){ AU.ready=true; res(true); } },6000);
+    setTimeout(ok,6000);
   });
 }
-
 function playClip(ms){
   if(AU.playing){ stopClip(); return; }
   var el=AU.el;
-  AU.limit=ms; AU.playing=true;
-  setPlay(true);
-  try{ el.currentTime=0; }catch(e){}
-  var begin=function(){
-    el.removeEventListener('playing',begin);
+  AU.limit=ms; AU.playing=true; setPlay(true);
+  try{ el.currentTime=S.offset; }catch(e){}
+  var go=function(){
+    el.removeEventListener('playing',go);
     AU.t0=performance.now();
-    AU.timer=setTimeout(stopClip, ms);
-    ringLoop();
+    AU.timer=setTimeout(stopClip,ms);
+    loop();
   };
-  el.addEventListener('playing',begin);
+  el.addEventListener('playing',go);
   var p=el.play();
-  if(p && p.catch) p.catch(function(){
-    el.removeEventListener('playing',begin);
+  if(p&&p.catch) p.catch(function(){
+    el.removeEventListener('playing',go);
     AU.playing=false; setPlay(false);
-    notice('Your browser blocked playback until you interact with the page. Press play again.');
+    note('Tap play once more. The browser needs a direct tap before it will start audio.');
   });
 }
-function ringLoop(){
+function loop(){
   var pct=Math.min(1,(performance.now()-AU.t0)/AU.limit);
   setRing(pct);
-  if(pct<1) AU.raf=requestAnimationFrame(ringLoop);
+  if(pct<1) AU.raf=requestAnimationFrame(loop);
 }
 function stopClip(){
   clearTimeout(AU.timer); cancelAnimationFrame(AU.raf);
   if(AU.el) AU.el.pause();
   AU.playing=false; setRing(0); setPlay(false);
 }
+function setPlay(on){ $('play').classList.toggle('on',on); }
+function note(m){ var n=$('note'); if(!m){ n.classList.add('hidden'); return; } n.textContent=m; n.classList.remove('hidden'); }
 
-/* ---------- spotify (import only) ---------- */
-function randStr(n){ var a=new Uint8Array(n); crypto.getRandomValues(a);
+/* ───────── spotify ───────── */
+function rand(n){ var a=new Uint8Array(n); crypto.getRandomValues(a);
   return Array.prototype.map.call(a,function(b){ return ('0'+b.toString(16)).slice(-2); }).join(''); }
-function b64url(buf){ var s='',b=new Uint8Array(buf); for(var i=0;i<b.length;i++) s+=String.fromCharCode(b[i]);
+function b64(buf){ var s='',b=new Uint8Array(buf); for(var i=0;i<b.length;i++) s+=String.fromCharCode(b[i]);
   return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
 
-function beginLogin(){
-  var cid=$('cid').value.trim();
-  if(!cid){ status('connect-status','Paste your Client ID first.','err'); return; }
-  if(location.protocol==='file:'){
-    status('connect-status','Spotify will not redirect back to a file:// address. Serve the folder instead: run "python3 -m http.server 8080" in it and open http://127.0.0.1:8080/','err'); return;
-  }
-  if(location.hostname==='localhost'){
-    status('connect-status','Spotify rejects "localhost". Open this at http://127.0.0.1'+(location.port?':'+location.port:'')+location.pathname+' instead.','err'); return;
-  }
-  REDIRECT = $('redir').value.trim() || HERE;
-  memSet('intro:redir',REDIRECT);
-  var v=randStr(48); ses('intro_v',v); ses('intro_cid',cid); ses('intro_r',REDIRECT); memSet('intro:cid',cid);
-  crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)).then(b64url).then(function(ch){
+function login(){
+  var cid=S.clientId||$('cid').value.trim();
+  if(!cid){ status('cstatus','Enter a Client ID to continue.','err'); return; }
+  S.clientId=cid;
+  var v=rand(48); ses('iv',v); ses('ic',cid); mset('intro:cid',cid);
+  status('cstatus','Redirecting to Spotify\u2026','wait');
+  crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)).then(b64).then(function(ch){
     location.href='https://accounts.spotify.com/authorize?'+new URLSearchParams({
-      client_id:cid, response_type:'code', redirect_uri:REDIRECT,
-      code_challenge_method:'S256', code_challenge:ch, scope:SCOPES}).toString();
+      client_id:cid,response_type:'code',redirect_uri:HERE,
+      code_challenge_method:'S256',code_challenge:ch,scope:SCOPES}).toString();
   });
 }
 function readTok(r){
@@ -581,13 +660,13 @@ function readTok(r){
   });
 }
 function exchange(code){
-  var v=ses('intro_v'), cid=ses('intro_cid'), rd=ses('intro_r')||REDIRECT;
-  if(!v||!cid) return Promise.reject(new Error('Login session was lost. Try connecting again.'));
-  REDIRECT=rd;
+  var v=ses('iv'), cid=ses('ic');
+  if(!v||!cid) return Promise.reject(new Error('That sign-in link expired. Try again.'));
+  S.clientId=cid;
   return fetch('https://accounts.spotify.com/api/token',{method:'POST',
     headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body:new URLSearchParams({grant_type:'authorization_code',code:code,redirect_uri:REDIRECT,client_id:cid,code_verifier:v})
-  }).then(readTok).then(function(j){ S.clientId=cid; memSet('intro:refresh',{cid:cid,token:S.refresh}); return j; });
+    body:new URLSearchParams({grant_type:'authorization_code',code:code,redirect_uri:HERE,client_id:cid,code_verifier:v})
+  }).then(readTok).then(function(j){ mset('intro:rt',{cid:cid,t:S.refresh}); return j; });
 }
 function refreshTok(){
   if(!S.refresh||!S.clientId) return Promise.reject(new Error('Session expired.'));
@@ -596,41 +675,45 @@ function refreshTok(){
     body:new URLSearchParams({grant_type:'refresh_token',refresh_token:S.refresh,client_id:S.clientId})}).then(readTok);
 }
 function api(path){
-  var ready=(S.token && Date.now()<S.tokenExp-30000)?Promise.resolve():refreshTok();
-  return ready.then(function(){
+  var pre=(S.token&&Date.now()<S.tokenExp-30000)?Promise.resolve():refreshTok();
+  return pre.then(function(){
     return fetch('https://api.spotify.com/v1'+path,{headers:{Authorization:'Bearer '+S.token}});
   }).then(function(r){
+    if(r.status===204) return {};
     return r.json().then(function(j){
       if(!r.ok){
-        var m=(j.error&&j.error.message)||('HTTP '+r.status);
-        if(r.status===403) m='Spotify refused that (403). Either the account owning your app is not on Premium, or that playlist is not one you own.';
-        if(r.status===401) m='Your Spotify session expired. Sign out and connect again.';
+        var m=(j.error&&j.error.message)||('Spotify returned '+r.status);
+        if(r.status===403) m='Spotify turned that down. This account needs to be on the app\u2019s allowlist, and the playlist has to be one you own.';
+        if(r.status===401) m='Your session expired. Sign in again.';
         throw new Error(m);
       }
       return j;
     });
   });
 }
-function myPlaylists(){
+function loadLibrary(){
   return api('/me').then(function(me){
     S.meId=me.id; S.meName=me.display_name||me.id;
     var out=[],off=0;
     function page(){
       return api('/me/playlists?limit=50&offset='+off).then(function(p){
         (p.items||[]).forEach(function(pl){
-          if(!pl) return;
-          if(!((pl.owner&&pl.owner.id===S.meId)||pl.collaborative)) return;
-          out.push({id:pl.id,name:pl.name||'Untitled',
-            total:(pl.items&&pl.items.total)||(pl.tracks&&pl.tracks.total)||0});
+          if(!pl||!pl.id) return;
+          var mine=(pl.owner&&pl.owner.id===S.meId)||pl.collaborative;
+          if(!mine) return;
+          var n=null;
+          if(pl.items&&typeof pl.items.total==='number') n=pl.items.total;
+          else if(pl.tracks&&typeof pl.tracks.total==='number') n=pl.tracks.total;
+          out.push({id:pl.id,name:pl.name||'Untitled',total:n});
         });
         off+=50;
-        if(p.next && off<400) return page();
+        if(p.next&&off<1000) return page();
       });
     }
     return page().then(function(){ return out; });
   });
 }
-function playlistTracks(id){
+function loadTracks(id){
   var out=[],off=0;
   function page(){
     return api('/playlists/'+id+'/items?limit=100&offset='+off).then(function(p){
@@ -638,48 +721,262 @@ function playlistTracks(id){
         var t=row&&(row.item||row.track);
         if(!t||row.is_local||!t.id||!t.artists||!t.artists.length) return;
         if(t.type&&t.type!=='track') return;
-        out.push({id:t.id,name:t.name,artists:t.artists.map(function(a){return a.name;}),
-          art:(t.album&&t.album.images&&t.album.images.length)?t.album.images[0].url:'', spotify:true});
+        out.push({id:t.id,name:t.name,artists:t.artists.map(function(a){ return a.name; }),
+          art:(t.album&&t.album.images&&t.album.images.length)?t.album.images[0].url:'',sp:true});
       });
       off+=100;
-      if(p.next && off<1000) return page();
+      if(p.next&&off<1000) return page();
     });
   }
   return page().then(function(){
-    var seen={},u=[]; out.forEach(function(t){ if(!seen[t.id]){seen[t.id]=1;u.push(t);} }); return u;
+    var seen={},u=[]; out.forEach(function(t){ if(!seen[t.id]){ seen[t.id]=1; u.push(t); } }); return u;
   });
 }
 
-/* ---------- drawing ---------- */
-var C = 2*Math.PI*80;
-$('ring-fg').style.strokeDasharray = C;
-function setRing(p){ $('ring-fg').style.strokeDashoffset = C*(1-p); }
-function setPlay(on){ $('play-btn').classList.toggle('on',on); }
-function status(id,msg,kind){ var e=$(id); e.textContent=msg||''; e.className='status'+(kind?' '+kind:''); }
-function notice(m){ var n=$('notice'); if(!m){ n.classList.add('hidden'); return; } n.textContent=m; n.classList.remove('hidden'); }
-function fmt(ms){ var s=Math.round(ms/1000); return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
-function esc(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+/* ───────── list parsing ───────── */
+function csvRow(l){
+  var o=[],c='',q=false;
+  for(var i=0;i<l.length;i++){
+    var ch=l[i];
+    if(q){ if(ch==='"'){ if(l[i+1]==='"'){ c+='"'; i++; } else q=false; } else c+=ch; }
+    else if(ch==='"') q=true;
+    else if(ch===','||ch==='\t'){ o.push(c); c=''; }
+    else c+=ch;
+  }
+  o.push(c);
+  return o.map(function(x){ return x.trim(); });
+}
+function parseSongs(text){
+  var L=text.split(/\r?\n/).map(function(l){ return l.trim(); }).filter(Boolean);
+  if(!L.length) return [];
+  var h=csvRow(L[0]).map(function(x){ return x.toLowerCase(); }), ti=-1, ai=-1;
+  h.forEach(function(x,i){
+    if(ti<0&&/track ?name|^track$|^title$|^song$|song ?name/.test(x)) ti=i;
+    if(ai<0&&/artist/.test(x)) ai=i;
+  });
+  if(ti>=0&&ai>=0&&h.length>1){
+    var o=[];
+    L.slice(1).forEach(function(l,i){
+      var c=csvRow(l);
+      if(!c[ti]||!c[ai]) return;
+      o.push({id:'c'+i,name:c[ti],artists:[c[ai].split(/\s*[,;]\s*/)[0]],art:''});
+    });
+    if(o.length) return o;
+  }
+  var out=[];
+  L.forEach(function(l,i){
+    var p=l.split(/\s+[-\u2013\u2014]\s+/);
+    if(p.length<2) return;
+    out.push({id:'m'+i,artists:[p[0].trim()],name:p.slice(1).join(' - ').trim(),art:''});
+  });
+  return out;
+}
+
+/* ───────── library UI ───────── */
+function drawLib(){
+  var q=norm($('pfilter').value), L=$('plist'); L.innerHTML='';
+  var arr=S.playlists.filter(function(p){ return !q||norm(p.name).indexOf(q)>=0; });
+  if(S.sort==='az') arr.sort(function(a,b){ return a.name.toLowerCase()<b.name.toLowerCase()?-1:1; });
+  else arr.sort(function(a,b){ return (b.total||0)-(a.total||0); });
+  $('libcount').textContent=S.playlists.length+' playlist'+(S.playlists.length===1?'':'s')+' on your account.';
+  if(!arr.length){ L.innerHTML='<div class="li dim"><span class="nm">Nothing matches</span></div>'; return; }
+  arr.forEach(function(p){
+    var b=document.createElement('button'); b.className='li';
+    var n=document.createElement('span'); n.className='nm'; n.textContent=p.name;
+    var c=document.createElement('span'); c.className='ct';
+    c.textContent=(p.total===null||p.total===undefined)?'open':(p.total+' tracks');
+    b.appendChild(n); b.appendChild(c);
+    b.addEventListener('click',function(){ openPlaylist(p.id,p.name); });
+    L.appendChild(b);
+  });
+}
+function openPlaylist(id,name){
+  status('lstatus','Loading '+name+'\u2026','wait');
+  loadTracks(id).then(function(ts){
+    if(ts.length<10) throw new Error(name+' only has '+ts.length+' usable tracks. Ten is the minimum.');
+    status('lstatus','');
+    useSource(name,ts,'spotify');
+  }).catch(function(e){ status('lstatus',e.message,'err'); });
+}
+function useSource(name,tracks,kind){
+  S.sourceName=name; S.tracks=tracks; S.sourceKind=kind;
+  $('sname').textContent=name;
+  $('ssub').textContent=tracks.length+' tracks. Guesses autocomplete from this list, so every round is winnable.';
+  show('s-setup');
+}
+
+/* ───────── setup UI ───────── */
+function drawCaps(){
+  var b=$('capchips'); b.innerHTML='';
+  CAPS.forEach(function(ms){
+    var lab=LADDER.filter(function(x){ return x.ms===ms; })[0].label;
+    var el=document.createElement('button');
+    el.className='chip'+(S.cap===ms?' on':''); el.textContent=lab;
+    el.addEventListener('click',function(){ S.cap=ms; mset('intro:cap',ms); drawCaps(); });
+    b.appendChild(el);
+  });
+  var l=$('legend'); l.innerHTML='';
+  stages().forEach(function(s){
+    var d=document.createElement('div'); d.className='leg';
+    d.innerHTML='<b></b><span></span>';
+    d.querySelector('b').textContent=s.label;
+    d.querySelector('span').textContent=s.pts+' pt'+(s.pts===1?'':'s');
+    l.appendChild(d);
+  });
+}
+function drawEach(){
+  var b=$('eachchips'); b.innerHTML='';
+  EACH.forEach(function(n){
+    var el=document.createElement('button');
+    el.className='chip'+(S.each===n?' on':''); el.textContent=n;
+    el.addEventListener('click',function(){ S.each=n; drawEach(); });
+    b.appendChild(el);
+  });
+}
+function drawNames(){
+  var b=$('names'); b.innerHTML='';
+  for(var i=0;i<S.seats;i++){
+    var r=document.createElement('div'); r.className='nrow';
+    var d=document.createElement('span'); d.className='dot'; d.style.background=COL[i%COL.length];
+    var inp=document.createElement('input');
+    inp.type='text'; inp.id='nm'+i; inp.maxLength=14; inp.autocomplete='off';
+    inp.placeholder='Player '+(i+1);
+    r.appendChild(d); r.appendChild(inp); b.appendChild(r);
+  }
+}
+
+/* ───────── run engine ───────── */
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.random()*(i+1)|0,t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function mkPlayer(n,c){ return {name:n,colour:c,queue:[],pool:[],results:[],ms:0,out:false,streak:0}; }
+function cur(){ return S.players[S.order[S.seat]]; }
+function solo(){ return S.players.length===1; }
+function songsEach(){ return S.mode==='endless'?Infinity:(S.mode==='ten'?10:(S.mode==='five'?5:S.each)); }
+
+function startRun(){
+  var n=S.mode==='party'?S.seats:1;
+  var each=songsEach();
+  var need=S.mode==='endless'?10:Math.max(10,n*each);
+  if(S.tracks.length<need){
+    status('sstatus','This needs '+need+' tracks and the list has '+S.tracks.length+'.','err'); return;
+  }
+  status('sstatus','');
+  var deck=shuffle(S.tracks);
+  S.players=[];
+  for(var i=0;i<n;i++){
+    var nm=(n>1?($('nm'+i)&&$('nm'+i).value.trim()):'')||('Player '+(i+1));
+    if(n===1) nm='You';
+    var p=mkPlayer(nm,COL[i%COL.length]);
+    p.pool=deck;
+    p.queue=S.mode==='endless'?shuffle(deck):deck.slice(i*each,(i+1)*each);
+    S.players.push(p);
+  }
+  S.round=0;
+  beginRound();
+}
+function beginRound(){
+  var act=[];
+  S.players.forEach(function(p,i){ if(!p.out) act.push(i); });
+  if(!act.length) return summary();
+  if(S.knockout&&S.players.length>1&&act.length<=1) return summary();
+  if(S.round>=songsEach()) return summary();
+  S.order=act; S.seat=0;
+  nextSeat();
+}
+function nextSeat(){
+  if(S.seat>=S.order.length){ S.round++; beginRound(); return; }
+  if(solo()) startRound(); else passScreen();
+}
+function endsAfterTurn(){
+  if(S.seat+1<S.order.length) return false;
+  var left=S.players.filter(function(p){ return !p.out; }).length;
+  if(S.knockout&&S.players.length>1&&left<=1) return true;
+  return S.round+1>=songsEach();
+}
+function passScreen(){
+  var p=cur();
+  $('pnm').textContent=p.name;
+  $('pnm').style.color=p.colour;
+  $('psb').textContent='Song '+(S.round+1)+' of '+songsEach()+'. Hand the phone over.';
+  var st=$('stand'); st.innerHTML='';
+  S.players.forEach(function(q){
+    var r=document.createElement('div'); r.className='srow'+(q.out?' out':'');
+    var d=document.createElement('span'); d.className='dot'; d.style.background=q.colour;
+    var n=document.createElement('span'); n.className='n'; n.textContent=q.name;
+    var v=document.createElement('span'); v.className='p';
+    v.textContent=q.out?'out':(totalPts(q)+' pts');
+    r.appendChild(d); r.appendChild(n); r.appendChild(v); st.appendChild(r);
+  });
+  show('s-pass');
+}
+
+function startRound(track,att){
+  att=att||0;
+  stopClip(); note('');
+  var p=cur();
+  S.current=track||(S.mode==='endless'?(p.queue.length?p.queue.shift():(p.queue=shuffle(p.pool)).shift()):p.queue[S.round]);
+  S.stage=0; S.guesses=[]; S.over=false; S.selected=null; S.offset=0;
+  $('guess').value=''; $('submit').disabled=true;
+  $('reveal').classList.add('hidden');
+  $('inputarea').classList.remove('hidden');
+  $('reroll').classList.toggle('hidden',S.mode!=='endless');
+  $('quit').textContent=S.mode==='endless'?'End run':'Quit';
+  $('band').style.background=p.colour;
+  closeSug(); drawStage(); drawAtts(); drawHead(); setRing(0); setPlay(false);
+  show('s-game');
+
+  $('play').disabled=true;
+  $('clip').innerHTML='<span class="spin"></span>';
+  $('worth').textContent='finding the clip';
+  S.roundStart=performance.now();
+
+  var want=S.current;
+  findClip(want).then(function(url){
+    if(S.current!==want) return;
+    if(!url){
+      if(att<6){
+        var used={}; used[want.id]=1;
+        p.results.forEach(function(r){ used[r.track.id]=1; });
+        var alt=p.pool.filter(function(t){ return !used[t.id]&&AU.cache[t.id]!==null; });
+        var rep=alt[Math.random()*alt.length|0];
+        if(rep){ if(S.mode!=='endless') p.queue[S.round]=rep; startRound(rep,att+1); return; }
+      }
+      $('clip').textContent='\u2014';
+      $('worth').textContent='no clip available';
+      note('No preview exists for this track. Skip to move on.');
+      return;
+    }
+    return loadClip(url).then(function(){
+      if(S.current!==want) return;
+      var longest=stages()[stages().length-1].ms/1000;
+      var room=Math.max(0,(AU.dur||30)-longest-0.3);
+      S.offset=S.randomStart?Math.random()*room:0;
+      AU.el.volume=S.vol;
+      $('play').disabled=false;
+      drawStage();
+      S.roundStart=performance.now();
+    });
+  });
+  $('guess').focus();
+}
 
 function drawStage(){
-  var st=stages(), cur0=st[S.stage];
-  $('clip-len').textContent=cur0.label;
-  $('clip-cap').textContent='unlocked \u00B7 worth '+cur0.pts+' pt'+(cur0.pts===1?'':'s')+' if you get it now';
-  var p=$('pills'); p.innerHTML='';
+  var st=stages(), c=st[S.stage];
+  $('clip').textContent=c.label;
+  $('worth').textContent='worth '+c.pts+' point'+(c.pts===1?'':'s')+' right now';
+  var b=$('pills'); b.innerHTML='';
   st.forEach(function(s,i){
-    var el=document.createElement('span');
-    el.className='pill'+(i<S.stage?' past':(i===S.stage?' now':''));
-    el.textContent=s.label;
-    p.appendChild(el);
+    var e=document.createElement('span');
+    e.className='pill'+(i<S.stage?' past':(i===S.stage?' now':''));
+    e.textContent=s.label;
+    b.appendChild(e);
   });
 }
-function drawAttempts(){
-  var st=stages(), w=$('attempts'); w.innerHTML='';
+function drawAtts(){
+  var st=stages(), w=$('atts'); w.innerHTML='';
   for(var i=0;i<st.length;i++){
     var g=S.guesses[i], d=document.createElement('div');
-    if(!g){
-      d.className='att empty';
-      d.innerHTML='<span class="m">'+(i+1)+'</span><span class="t"></span>';
-    } else {
+    if(!g){ d.className='att empty'; d.innerHTML='<span class="m">'+(i+1)+'</span><span class="t"></span>'; }
+    else{
       d.className='att '+g.type;
       var m=g.type==='correct'?'\u25CF':(g.type==='wrong'?'\u2715':'\u2192');
       d.innerHTML='<span class="m">'+m+'</span><span class="t"></span>';
@@ -690,123 +987,18 @@ function drawAttempts(){
 }
 function drawHead(){
   var p=cur();
-  $('g-src').textContent = S.mode==='h2h' ? p.name : S.sourceName;
-  $('g-pos').textContent = S.over ? 'Revealed'
-    : (S.mode==='endless' ? ('Round '+(S.turnIdx+1)) : ('Song '+(round()+1)+' of '+S.setLen));
-  var solved=p.results.filter(function(r){return r.solved;}).length;
-  var pts=p.results.reduce(function(a,r){return a+r.points;},0);
-  $('run-stats').textContent = S.mode==='h2h'
-    ? (p.name.toUpperCase()+' \u00B7 '+fmt(p.ms))
-    : (S.mode==='endless' ? ('STREAK '+p.streak+' \u00B7 BEST '+S.best+' \u00B7 '+solved+'/'+p.results.length)
-                          : (pts+' PTS \u00B7 '+solved+'/'+p.results.length));
+  $('gwho').textContent=solo()?S.sourceName:p.name;
+  $('gwho').style.color=solo()?'':p.colour;
+  $('gpos').textContent=S.over?'Revealed'
+    :(S.mode==='endless'?('Round '+(S.round+1)):('Song '+(S.round+1)+' of '+songsEach()));
+  var solved=p.results.filter(function(r){ return r.solved; }).length;
+  $('rstats').textContent=solo()
+    ? (S.mode==='endless'?('Streak '+p.streak+' \u00B7 best '+S.best+' \u00B7 '+totalPts(p)+' pts')
+                         :(totalPts(p)+' pts \u00B7 '+solved+'/'+p.results.length))
+    : (p.name+' \u00B7 '+totalPts(p)+' pts \u00B7 '+fmt(p.ms));
 }
 
-/* ---------- run control ---------- */
-function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.random()*(i+1)|0,t=a[i];a[i]=a[j];a[j]=t; } return a; }
-function cur(){ return S.players[S.mode==='h2h' ? S.turnIdx%2 : 0]; }
-function round(){ return S.mode==='h2h' ? Math.floor(S.turnIdx/2) : S.turnIdx; }
-function totalTurns(){ return S.mode==='endless' ? Infinity : (S.mode==='h2h' ? S.setLen*2 : S.setLen); }
-function fatal(i){ return S.mode==='h2h' && i%2===0 && (S.players[0].out||S.players[1].out); }
-function willEnd(){ var n=S.turnIdx+1; return n>=totalTurns()||fatal(n); }
-
-function newPlayer(name){ return {name:name,queue:[],results:[],ms:0,out:false,streak:0}; }
-
-function startRun(){
-  var st=stages();
-  if(!st.length){ status('setup-status','Pick a maximum clip length.','err'); return; }
-  var need = S.mode==='ten'?10:(S.mode==='h2h'?10:(S.mode==='five'?5:1));
-  if(S.tracks.length<Math.max(need,10)){
-    status('setup-status','This needs at least '+Math.max(need,10)+' tracks and the list has '+S.tracks.length+'.','err'); return;
-  }
-  status('setup-status','');
-  var deck=shuffle(S.tracks);
-  if(S.mode==='h2h'){
-    S.setLen=5;
-    S.players=[newPlayer($('p1').value.trim()||'Player 1'), newPlayer($('p2').value.trim()||'Player 2')];
-    S.players[0].queue=deck.slice(0,5); S.players[1].queue=deck.slice(5,10);
-  } else {
-    S.setLen = S.mode==='ten'?10:(S.mode==='five'?5:0);
-    S.players=[newPlayer('You')];
-    S.players[0].queue = S.mode==='endless' ? deck : deck.slice(0,S.setLen);
-  }
-  S.players.forEach(function(p){ p.pool = deck; });
-  S.turnIdx=0;
-  step();
-}
-
-function step(){
-  if(S.turnIdx>=totalTurns()||fatal(S.turnIdx)){ summary(); return; }
-  if(S.mode==='h2h'){ passScreen(); return; }
-  startRound();
-}
-function passScreen(){
-  var p=cur(), a=S.players[0], b=S.players[1];
-  $('pass-who').textContent=p.name;
-  $('pass-sub').textContent='Song '+(round()+1)+' of '+S.setLen+'. The clock starts when you tap.';
-  $('pass-clock').textContent=a.name+' '+fmt(a.ms)+'   \u00B7   '+b.name+' '+fmt(b.ms);
-  show('s-pass');
-}
-
-function pickTrack(){
-  var p=cur();
-  if(S.mode==='endless'){
-    if(!p.queue.length) p.queue=shuffle(p.pool);
-    return p.queue.shift();
-  }
-  return p.queue[round()];
-}
-
-function startRound(track, attempt){
-  attempt = attempt || 0;
-  stopClip();
-  notice('');
-  S.current = track || pickTrack();
-  S.stage=0; S.guesses=[]; S.over=false; S.won=false; S.selected=null;
-  $('guess').value=''; $('submit-btn').disabled=true;
-  $('reveal').classList.add('hidden');
-  $('input-area').classList.remove('hidden');
-  $('reroll-btn').classList.toggle('hidden', S.mode!=='endless');
-  $('quit-btn').textContent = S.mode==='endless' ? 'End run' : 'Quit';
-  closeSuggest(); drawStage(); drawAttempts(); drawHead(); setRing(0); setPlay(false);
-  show('s-game');
-
-  $('play-btn').disabled=true;
-  $('clip-len').innerHTML='<span class="spin"></span>';
-  $('clip-cap').textContent='finding the clip';
-  S.roundStart=performance.now();
-
-  var wanted=S.current;
-  findClip(wanted).then(function(url){
-    if(S.current!==wanted) return;
-    if(!url){
-      if(attempt<6){
-        var used={}; used[wanted.id]=1;
-        cur().results.forEach(function(r){ used[r.track.id]=1; });
-        var swap=(cur().pool||S.tracks).filter(function(t){ return !used[t.id] && AU.cache[t.id]!==null; });
-        var repl=swap[Math.random()*swap.length|0];
-        if(repl){
-          if(S.mode!=='endless') cur().queue[round()]=repl;
-          startRound(repl, attempt+1);
-          return;
-        }
-      }
-      $('clip-len').textContent='\u2014';
-      $('clip-cap').textContent='no clip available';
-      notice('No preview could be found for this track. Press Skip to move on.');
-      return;
-    }
-    return loadClip(url).then(function(){
-      if(S.current!==wanted) return;
-      $('play-btn').disabled=false;
-      drawStage();
-      S.roundStart=performance.now();
-    });
-  });
-
-  $('guess').focus();
-}
-
-/* ---------- guessing ---------- */
+/* ───────── guessing ───────── */
 function label(t){ return t.artists.join(', ')+' \u2014 '+t.name; }
 function match(q){
   var n=norm(q); if(!n) return [];
@@ -818,363 +1010,259 @@ function match(q){
   }
   return a.concat(b).slice(0,60);
 }
-function openSuggest(list){
-  var ul=$('suggest'); ul.innerHTML=''; S.filtered=list; S.hi=-1;
-  if(!list.length){ ul.innerHTML='<li class="none">Nothing in this list matches.</li>'; ul.classList.add('open'); return; }
-  list.forEach(function(t,i){
+function openSug(l){
+  var u=$('sug'); u.innerHTML=''; S.filtered=l; S.hi=-1;
+  if(!l.length){ u.innerHTML='<li class="no">Nothing in this list matches</li>'; u.classList.add('open'); return; }
+  l.forEach(function(t,i){
     var li=document.createElement('li');
+    var n=document.createElement('span'); n.textContent=t.name;
     var a=document.createElement('span'); a.className='a'; a.textContent=t.artists.join(', ');
-    var b=document.createElement('span'); b.textContent=t.name;
-    li.appendChild(b); li.appendChild(a);
+    li.appendChild(n); li.appendChild(a);
     li.addEventListener('mousedown',function(e){ e.preventDefault(); pick(i); });
-    ul.appendChild(li);
+    u.appendChild(li);
   });
-  ul.classList.add('open');
+  u.classList.add('open');
 }
-function closeSuggest(){ $('suggest').classList.remove('open'); S.hi=-1; }
-function hilite(n){
-  var items=$('suggest').querySelectorAll('li:not(.none)');
-  if(!items.length) return;
-  if(S.hi>=0&&items[S.hi]) items[S.hi].classList.remove('hi');
-  S.hi=(n+items.length)%items.length;
-  items[S.hi].classList.add('hi');
-  items[S.hi].scrollIntoView({block:'nearest'});
+function closeSug(){ $('sug').classList.remove('open'); S.hi=-1; }
+function hi(n){
+  var it=$('sug').querySelectorAll('li:not(.no)');
+  if(!it.length) return;
+  if(S.hi>=0&&it[S.hi]) it[S.hi].classList.remove('hi');
+  S.hi=(n+it.length)%it.length;
+  it[S.hi].classList.add('hi');
+  it[S.hi].scrollIntoView({block:'nearest'});
 }
 function pick(i){
   var t=S.filtered[i]; if(!t) return;
-  S.selected=t; $('guess').value=label(t); $('submit-btn').disabled=false;
-  closeSuggest(); $('guess').focus();
+  S.selected=t; $('guess').value=label(t); $('submit').disabled=false;
+  closeSug(); $('guess').focus();
 }
 function submit(){
   if(!S.selected||S.over) return;
-  var ok = S.selected.id===S.current.id ||
-    (norm(S.selected.name)===norm(S.current.name) && norm(S.selected.artists[0])===norm(S.current.artists[0]));
+  var ok=S.selected.id===S.current.id||
+    (norm(S.selected.name)===norm(S.current.name)&&norm(S.selected.artists[0])===norm(S.current.artists[0]));
   if(ok){ S.guesses.push({type:'correct',label:label(S.selected)}); endRound(true); }
-  else next({type:'wrong',label:label(S.selected)});
+  else advance({type:'wrong',label:label(S.selected)});
 }
-function next(entry){
+function advance(e){
   stopClip();
-  S.guesses.push(entry);
-  var st=stages();
-  if(S.guesses.length>=st.length){ endRound(false); return; }
+  S.guesses.push(e);
+  if(S.guesses.length>=stages().length){ endRound(false); return; }
   S.stage++;
-  drawStage(); drawAttempts(); drawHead();
-  $('guess').value=''; S.selected=null; $('submit-btn').disabled=true;
-  closeSuggest(); $('guess').focus();
+  drawStage(); drawAtts(); drawHead();
+  $('guess').value=''; S.selected=null; $('submit').disabled=true;
+  closeSug(); $('guess').focus();
 }
-function squares(gs){
-  var st=stages(), out='';
+function squares(g){
+  var st=stages(), o='';
   for(var i=0;i<st.length;i++){
-    var g=gs[i];
-    out += !g ? '\u2B1C' : (g.type==='correct'?'\uD83D\uDFE9':(g.type==='wrong'?'\uD83D\uDFE5':'\u2B1B'));
+    var x=g[i];
+    o+=!x?'\u2B1C':(x.type==='correct'?'\uD83D\uDFE9':(x.type==='wrong'?'\uD83D\uDFE5':'\u2B1B'));
   }
-  return out;
+  return o;
 }
-
 function endRound(won){
   stopClip();
-  S.over=true; S.won=won;
-  var st=stages();
-  drawAttempts(); drawHead();
+  S.over=true;
+  var st=stages(), p=cur(), at=st[S.guesses.length-1];
+  p.ms+=performance.now()-S.roundStart;
+  p.results.push({track:S.current,guesses:S.guesses.slice(),solved:won,at:at.label,points:won?at.pts:0});
+  if(won){ p.streak++; if(p.streak>S.best){ S.best=p.streak; mset('intro:best',S.best); } }
+  else{ p.streak=0; if(S.knockout&&!solo()) p.out=true; }
+  drawAtts(); drawHead();
 
-  var p=cur(), ms=performance.now()-S.roundStart;
-  var at=st[S.guesses.length-1];
-  p.ms+=ms;
-  p.results.push({track:S.current,guesses:S.guesses.slice(),solved:won,ms:ms,
-    at:at.label, points: won ? at.pts : 0});
-  if(won){ p.streak++; if(p.streak>S.best){ S.best=p.streak; memSet('intro:best',S.best); } }
-  else { p.streak=0; if(S.mode==='h2h') p.out=true; }
-
-  $('input-area').classList.add('hidden');
-  $('verdict').textContent = won ? ('Named it at '+at.label+' \u00B7 '+at.pts+' pts') : 'Out of guesses';
+  $('inputarea').classList.add('hidden');
+  $('verdict').textContent=won?('Named it at '+at.label+' \u00B7 '+at.pts+' pts'):'Out of guesses';
   $('verdict').className='verdict '+(won?'win':'lose');
-  var art=$('art');
-  if(S.current.art){ art.src=S.current.art; art.style.display='block'; } else art.style.display='none';
-  $('rv-title').textContent=S.current.name;
-  $('rv-artist').textContent=S.current.artists.join(', ');
-  $('rv-sq').textContent=squares(S.guesses);
-  var l=$('rv-link');
-  if(S.current.spotify){ l.href='https://open.spotify.com/track/'+S.current.id; l.classList.remove('hidden'); }
+  var a=$('art');
+  if(S.current.art){ a.src=S.current.art; a.style.display='block'; } else a.style.display='none';
+  $('rtitle').textContent=S.current.name;
+  $('rartist').textContent=S.current.artists.join(', ');
+  $('rsq').textContent=squares(S.guesses);
+  var l=$('rlink');
+  if(S.current.sp){ l.href='https://open.spotify.com/track/'+S.current.id; l.classList.remove('hidden'); }
   else l.classList.add('hidden');
-
-  if(S.mode==='endless') $('next-btn').textContent='Next song';
-  else if(willEnd()) $('next-btn').textContent = S.mode==='h2h'?'See who won':'See results';
-  else $('next-btn').textContent = S.mode==='h2h'?'Hand over':'Next song';
+  $('next').textContent=S.mode==='endless'?'Next song'
+    :(endsAfterTurn()?'See results':(solo()?'Next song':'Hand over'));
   $('reveal').classList.remove('hidden');
-  $('next-btn').focus();
+  $('next').focus();
 }
 
-/* ---------- summary ---------- */
+/* ───────── summary ───────── */
 function summary(){
   stopClip();
-  var st=stages(), h='';
-  if(S.mode==='h2h'){
-    var a=S.players[0], b=S.players[1], w=null, why='';
-    if(a.out&&!b.out){ w=b; why=a.name+' missed one'; }
-    else if(b.out&&!a.out){ w=a; why=b.name+' missed one'; }
-    else if(a.out&&b.out){ why='Both went out'; }
-    else if(totalPts(a)!==totalPts(b)){
-      w = totalPts(a)>totalPts(b) ? a : b;
-      why = 'Named them from less audio, '+Math.max(totalPts(a),totalPts(b))+' points to '+Math.min(totalPts(a),totalPts(b));
-    }
-    else if(a.ms!==b.ms){ w = a.ms<b.ms ? a : b; why='Level on points, faster by '+fmt(Math.abs(a.ms-b.ms)); }
-    else why='Dead heat';
-    h+='<div class="verdict '+(w?'win':'lose')+'">Head to head</div>';
-    h+='<h3>'+esc(w?w.name+' wins':'Nobody wins')+'</h3><div class="by">'+esc(why)+'</div><div class="h2h">';
-    [a,b].forEach(function(pl){
-      h+='<div class="h2h-col'+(w===pl?' win':'')+'"><h4>'+esc(pl.name)+'</h4><div class="t">'+totalPts(pl)+' pts</div>'+
-         '<div class="ts">'+fmt(pl.ms)+'</div><div class="s">';
-      pl.results.forEach(function(r){ h+=squares(r.guesses)+'<br>'; });
-      h+='</div></div>';
+  var h='';
+  if(S.players.length>1){
+    var rank=S.players.slice().sort(function(a,b){
+      if(a.out!==b.out) return a.out?1:-1;
+      if(totalPts(b)!==totalPts(a)) return totalPts(b)-totalPts(a);
+      return a.ms-b.ms;
+    });
+    var w=rank[0];
+    var tied=rank.filter(function(p){ return !p.out&&totalPts(p)===totalPts(w)&&p.ms===w.ms; }).length>1;
+    h+='<div class="verdict '+(tied?'':'win')+'">'+(S.knockout?'Knockout':'Party')+'</div>';
+    h+='<h3>'+esc(tied?'Dead heat':w.name+' wins')+'</h3>';
+    h+='<div class="by">'+esc(S.sourceName)+'</div><div class="board">';
+    rank.forEach(function(p,i){
+      h+='<div class="brow'+(i===0&&!tied?' first':'')+(p.out?' out':'')+'">'+
+         '<span class="rk">'+(i+1)+'</span>'+
+         '<span class="dot" style="background:'+p.colour+'"></span>'+
+         '<span class="n">'+esc(p.name)+'<em>'+(p.out?'knocked out \u00B7 ':'')+
+         p.results.filter(function(r){ return r.solved; }).length+'/'+p.results.length+' \u00B7 '+fmt(p.ms)+'</em></span>'+
+         '<span class="p">'+totalPts(p)+'</span></div>';
     });
     h+='</div>';
   } else {
     var p=S.players[0];
-    if(!p.results.length){
-      $('sum').innerHTML='<div class="verdict">Nothing played</div><h3>Run ended early</h3>' +
-        '<div class="by">No songs were finished, so there is nothing to score.</div>';
-      show('s-summary'); return;
+    if(!p||!p.results.length){
+      h='<div class="verdict">Run ended</div><h3>Nothing to score</h3><div class="by">No songs were finished.</div>';
+    } else {
+      var pts=totalPts(p), solved=p.results.filter(function(r){ return r.solved; }).length;
+      h+='<div class="verdict'+(solved===p.results.length?' win':'')+'">'+esc(S.sourceName)+'</div>';
+      h+='<div class="big-num">'+pts+'<small> / '+(p.results.length*MAX_PTS)+'</small></div>';
+      h+='<div class="by">'+solved+' of '+p.results.length+' named \u00B7 '+fmt(p.ms)+
+         (S.mode==='endless'?(' \u00B7 best streak '+S.best):'')+'</div><div class="tally">';
+      p.results.forEach(function(r){
+        h+='<div class="trow"><span class="s">'+squares(r.guesses)+'</span><span class="n">'+
+           esc(r.track.artists[0]+' \u2014 '+r.track.name)+'</span><span class="p">'+r.points+'</span></div>';
+      });
+      h+='</div>';
     }
-    var pts=p.results.reduce(function(s,r){return s+r.points;},0);
-    var solved=p.results.filter(function(r){return r.solved;}).length;
-    var max=p.results.length*MAX_PTS;
-    h+='<div class="verdict'+(solved===p.results.length&&solved?' win':'')+'">'+esc(S.sourceName)+'</div>';
-    h+='<div class="bigscore">'+pts+'<small> / '+max+'</small></div>';
-    h+='<div class="by">'+solved+' of '+p.results.length+' named \u00B7 '+fmt(p.ms)+
-       (S.mode==='endless'?(' \u00B7 best streak '+S.best):'')+'</div><div class="tally">';
-    p.results.forEach(function(r){
-      h+='<div class="tally-row"><span class="s">'+squares(r.guesses)+'</span><span class="nm">'+
-         esc(r.track.artists[0]+' \u2014 '+r.track.name)+'</span><span class="pt">'+r.points+'</span></div>';
-    });
-    h+='</div>';
   }
   $('sum').innerHTML=h;
-  show('s-summary');
+  show('s-sum');
 }
 function sumText(){
   var head='Intro \u00B7 '+S.sourceName+'\n';
-  if(S.mode==='h2h') return head+S.players.map(function(p){
-    return p.name+' '+fmt(p.ms)+(p.out?' (out)':'')+'\n'+p.results.map(function(r){return squares(r.guesses);}).join('\n');
+  if(S.players.length>1) return head+S.players.map(function(p){
+    return p.name+' '+totalPts(p)+' pts'+(p.out?' (out)':'')+'\n'+
+      p.results.map(function(r){ return squares(r.guesses); }).join('\n');
   }).join('\n\n');
-  var p=S.players[0], pts=p.results.reduce(function(s,r){return s+r.points;},0);
-  return head+pts+'/'+(p.results.length*MAX_PTS)+' \u00B7 '+fmt(p.ms)+'\n'+
-    p.results.map(function(r){return squares(r.guesses);}).join('\n');
+  var p=S.players[0];
+  return head+totalPts(p)+'/'+(p.results.length*MAX_PTS)+' \u00B7 '+fmt(p.ms)+'\n'+
+    p.results.map(function(r){ return squares(r.guesses); }).join('\n');
 }
 
-/* ---------- sources ---------- */
-function splitCsv(line){
-  var out=[], cur='', q=false;
-  for(var i=0;i<line.length;i++){
-    var c=line[i];
-    if(q){
-      if(c==='"'){ if(line[i+1]==='"'){ cur+='"'; i++; } else q=false; }
-      else cur+=c;
-    } else if(c==='"') q=true;
-    else if(c===','||c==='\t'){ out.push(cur); cur=''; }
-    else cur+=c;
-  }
-  out.push(cur);
-  return out.map(function(x){ return x.trim(); });
-}
-function parseSongs(text){
-  var lines=text.split(/\r?\n/).map(function(l){ return l.trim(); }).filter(Boolean);
-  if(!lines.length) return [];
+/* ───────── wiring ───────── */
+AU.el=$('au'); ringInit(); drawCaps(); drawEach(); drawNames();
 
-  /* CSV export? Look for a header row naming a track and an artist column. */
-  var head=splitCsv(lines[0]).map(function(h){ return h.toLowerCase(); });
-  var ti=-1, ai=-1;
-  head.forEach(function(h,i){
-    if(ti<0 && /track ?name|^track$|^title$|^song$|song ?name/.test(h)) ti=i;
-    if(ai<0 && /artist/.test(h)) ai=i;
-  });
-  if(ti>=0 && ai>=0 && head.length>1){
-    var outc=[];
-    lines.slice(1).forEach(function(l,i){
-      var c=splitCsv(l);
-      if(!c[ti]||!c[ai]) return;
-      outc.push({id:'c'+i, name:c[ti], artists:[c[ai].split(/\s*[,;]\s*/)[0]], art:''});
-    });
-    if(outc.length) return outc;
-  }
-
-  /* Otherwise: one "Artist - Title" per line. */
-  var out=[];
-  lines.forEach(function(l,i){
-    var parts=l.split(/\s+[-\u2013\u2014]\s+/);
-    if(parts.length<2) return;
-    out.push({id:'m'+i, artists:[parts[0].trim()], name:parts.slice(1).join(' - ').trim(), art:''});
-  });
-  return out;
-}
-
-function useSource(name, tracks, kind){
-  S.sourceName=name; S.tracks=tracks; S.sourceKind=kind;
-  $('setup-title').textContent=name;
-  $('setup-sub').textContent=tracks.length+' tracks. Guesses autocomplete from this list only, so every round is winnable.';
-  $('setup-src').textContent=tracks.length+' TRACKS';
-  show('s-setup');
-}
-function renderPlaylists(){
-  var q=norm($('pl-filter').value), list=$('pl-list'); list.innerHTML='';
-  var shown=S.playlists.filter(function(p){ return !q||norm(p.name).indexOf(q)>=0; });
-  if(!shown.length){ list.innerHTML='<div class="list-item dim">No playlists match.</div>'; return; }
-  shown.slice(0,200).forEach(function(p){
-    var b=document.createElement('button');
-    b.className='list-item'+(p.total<10?' dim':'');
-    var n=document.createElement('span'); n.textContent=p.name;
-    var c=document.createElement('span'); c.className='n'; c.textContent=p.total+' tracks';
-    b.appendChild(n); b.appendChild(c);
-    if(p.total>=10) b.addEventListener('click',function(){
-      status('pick-status','Loading \u201C'+p.name+'\u201D\u2026','wait');
-      playlistTracks(p.id).then(function(ts){
-        if(ts.length<10) throw new Error('Only '+ts.length+' usable tracks after skipping local files and episodes.');
-        status('pick-status','');
-        useSource(p.name, ts, 'spotify');
-      }).catch(function(e){ status('pick-status',e.message,'err'); });
-    });
-    list.appendChild(b);
-  });
-}
-function enterSpotify(){
-  return myPlaylists().then(function(pls){
-    S.playlists=pls.sort(function(a,b){ return b.total-a.total; });
-    $('who').textContent='SIGNED IN AS '+(S.meName||'').toUpperCase();
-    renderPlaylists(); show('s-pick');
-    if(!pls.length) status('pick-status','No playlists found that you own. Make one in Spotify and reload.','err');
-  });
-}
-
-/* ---------- cap selector ---------- */
-function renderCaps(){
-  var box=$('chips'); box.innerHTML='';
-  CAPS.forEach(function(ms){
-    var b=document.createElement('button');
-    var lab=LADDER.filter(function(x){ return x.ms===ms; })[0].label;
-    b.className='chip'+(S.cap===ms?' on':''); b.textContent=lab;
-    b.addEventListener('click',function(){ S.cap=ms; renderCaps(); memSet('intro:cap',ms); });
-    box.appendChild(b);
-  });
-  var l=$('legend'); l.innerHTML='';
-  stages().forEach(function(st){
-    var d=document.createElement('div'); d.className='leg';
-    d.innerHTML='<span class="ll"></span><span class="lp"></span>';
-    d.querySelector('.ll').textContent=st.label;
-    d.querySelector('.lp').textContent=st.pts+' pt'+(st.pts===1?'':'s');
-    l.appendChild(d);
-  });
-}
-
-/* ---------- wiring ---------- */
-renderCaps();
-$('redir').value=HERE;
-AU.el=$('au');
-
-$('home-btn').addEventListener('click',function(){ stopClip(); show('s-home'); });
-$('tile-spotify').addEventListener('click',function(){ show(S.token?'s-pick':'s-connect'); });
-$('tile-manual').addEventListener('click',function(){
-  $('manual-card').classList.toggle('hidden');
-  if(!$('manual-card').classList.contains('hidden')) $('manual-text').focus();
+$('back').addEventListener('click',function(){ var t=$('back').dataset.to; if(t) show(t); });
+$('go-spotify').addEventListener('click',function(){ show(S.token?'s-lib':'s-connect'); });
+$('go-paste').addEventListener('click',function(){ show('s-paste'); });
+$('pgo').addEventListener('click',function(){
+  var t=parseSongs($('ptext').value);
+  if(t.length<10){ status('pstatus','Found '+t.length+' songs. Ten is the minimum.','err'); return; }
+  status('pstatus',''); useSource('Your list',t,'paste');
 });
-$('manual-go').addEventListener('click',function(){
-  var t=parseSongs($('manual-text').value);
-  if(t.length<10){ status('manual-status','Only found '+t.length+' songs, and 10 is the minimum. Use "Artist - Title" per line, or paste a CSV export with its header row.','err'); return; }
-  status('manual-status',''); useSource('Your list',t,'manual');
+$('connect').addEventListener('click',login);
+$('cid').addEventListener('keydown',function(e){ if(e.key==='Enter') login(); });
+$('pfilter').addEventListener('input',drawLib);
+$('psort').addEventListener('click',function(){
+  S.sort=S.sort==='az'?'size':'az';
+  $('psort').textContent=S.sort==='az'?'A\u2013Z':'Size';
+  drawLib();
 });
-$('copy-redir').addEventListener('click',function(){
-  var i=$('redir'); i.select();
-  var d=function(){ $('copy-redir').textContent='Copied'; setTimeout(function(){ $('copy-redir').textContent='Copy'; },1500); };
-  if(navigator.clipboard) navigator.clipboard.writeText(i.value).then(d,d); else { try{document.execCommand('copy');}catch(e){} d(); }
+$('pload').addEventListener('click',function(){
+  var m=$('plink').value.trim().match(/playlist[/:]([A-Za-z0-9]+)/);
+  if(!m){ status('lstatus','That does not look like a playlist link.','err'); return; }
+  openPlaylist(m[1],'Playlist');
 });
-function checkRedir(){
-  var v=$('redir').value.trim(), w=$('redir-warn');
-  if(!v||v===HERE){ w.textContent=''; return; }
-  var bare=function(x){ return x.replace(/\/$/,''); };
-  if(bare(v)!==bare(HERE))
-    w.textContent='Heads up: this differs from the address you are on ('+HERE+'), so Spotify will send you somewhere else after login. Only do this if the other address also serves this file.';
-  else w.textContent='';
-}
-$('redir').addEventListener('input',checkRedir);
-$('connect-btn').addEventListener('click',beginLogin);
-$('cid').addEventListener('keydown',function(e){ if(e.key==='Enter') beginLogin(); });
-$('signout-btn').addEventListener('click',function(){
-  S.token=''; S.refresh=''; S.tokenExp=0; memSet('intro:refresh',null); show('s-home');
-});
-$('pl-filter').addEventListener('input',renderPlaylists);
-$('back-home').addEventListener('click',function(){ show('s-home'); });
 
-Array.prototype.forEach.call($('seg-mode').children,function(b){
+Array.prototype.forEach.call($('segmode').children,function(b){
   b.addEventListener('click',function(){
-    Array.prototype.forEach.call($('seg-mode').children,function(x){ x.classList.remove('on'); });
-    b.classList.add('on');
-    S.mode=b.dataset.mode;
-    $('names-box').classList.toggle('hidden', S.mode!=='h2h');
+    Array.prototype.forEach.call($('segmode').children,function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); S.mode=b.dataset.m;
+    $('partybox').classList.toggle('hidden',S.mode!=='party');
   });
 });
-$('start-btn').addEventListener('click',startRun);
-$('pass-btn').addEventListener('click',function(){ startRound(); });
-
-$('play-btn').addEventListener('click',function(){ if(!S.over) playClip(stages()[S.stage].ms); });
-$('skip-btn').addEventListener('click',function(){ if(!S.over) next({type:'skip',label:'Skipped'}); });
-$('submit-btn').addEventListener('click',submit);
-$('next-btn').addEventListener('click',function(){
-  if(S.mode==='endless'){ S.turnIdx++; startRound(); return; }
-  S.turnIdx++; step();
+$('pminus').addEventListener('click',function(){ if(S.seats>2){ S.seats--; $('pcount').textContent=S.seats; drawNames(); } });
+$('pplus').addEventListener('click',function(){ if(S.seats<8){ S.seats++; $('pcount').textContent=S.seats; drawNames(); } });
+$('swko').addEventListener('click',function(){ S.knockout=!S.knockout; $('swko').classList.toggle('on',S.knockout); });
+$('swrand').addEventListener('click',function(){
+  S.randomStart=!S.randomStart; $('swrand').classList.toggle('on',S.randomStart); mset('intro:rnd',S.randomStart);
 });
-$('reroll-btn').addEventListener('click',function(){ startRound(); });
-$('quit-btn').addEventListener('click',function(){ stopClip(); summary(); });
-$('sum-setup').addEventListener('click',function(){ show('s-setup'); });
-$('sum-again').addEventListener('click',startRun);
-$('sum-copy').addEventListener('click',function(){
-  var txt=sumText(), b=$('sum-copy');
+$('start').addEventListener('click',startRun);
+$('pbtn').addEventListener('click',function(){ startRound(); });
+
+$('play').addEventListener('click',function(){ if(!S.over) playClip(stages()[S.stage].ms); });
+$('skip').addEventListener('click',function(){ if(!S.over) advance({type:'skip',label:'Skipped'}); });
+$('submit').addEventListener('click',submit);
+$('next').addEventListener('click',function(){
+  if(S.mode==='endless'){ S.round++; startRound(); return; }
+  S.seat++; nextSeat();
+});
+$('reroll').addEventListener('click',function(){ startRound(); });
+$('quit').addEventListener('click',function(){ stopClip(); summary(); });
+$('ssetup').addEventListener('click',function(){ show('s-setup'); });
+$('sagain').addEventListener('click',startRun);
+$('scopy').addEventListener('click',function(){
+  var t=sumText(), b=$('scopy');
   var d=function(){ b.textContent='Copied'; setTimeout(function(){ b.textContent='Copy result'; },1600); };
-  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(d,d);
-  else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
-    try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); d(); }
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(d,d);
+  else{ var a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select();
+    try{ document.execCommand('copy'); }catch(e){} document.body.removeChild(a); d(); }
+});
+$('vol').addEventListener('input',function(){
+  S.vol=$('vol').value/100;
+  $('volpct').textContent=$('vol').value;
+  if(AU.el) AU.el.volume=S.vol;
+  mset('intro:vol',S.vol);
 });
 
 var gi=$('guess');
 gi.addEventListener('input',function(){
-  S.selected=null; $('submit-btn').disabled=true;
+  S.selected=null; $('submit').disabled=true;
   var v=gi.value.trim();
-  if(!v){ closeSuggest(); return; }
-  openSuggest(match(v));
+  if(!v){ closeSug(); return; }
+  openSug(match(v));
 });
 gi.addEventListener('keydown',function(e){
-  var open=$('suggest').classList.contains('open');
-  if(e.key==='ArrowDown'){ e.preventDefault(); if(!open) openSuggest(match(gi.value.trim())); hilite(S.hi+1); }
-  else if(e.key==='ArrowUp'){ e.preventDefault(); hilite(S.hi-1); }
+  var o=$('sug').classList.contains('open');
+  if(e.key==='ArrowDown'){ e.preventDefault(); if(!o) openSug(match(gi.value.trim())); hi(S.hi+1); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); hi(S.hi-1); }
   else if(e.key==='Enter'){ e.preventDefault();
-    if(open&&S.hi>=0) pick(S.hi);
-    else if(open&&S.filtered.length===1) pick(0);
+    if(o&&S.hi>=0) pick(S.hi);
+    else if(o&&S.filtered.length===1) pick(0);
     else if(S.selected) submit();
-  } else if(e.key==='Escape') closeSuggest();
+  } else if(e.key==='Escape') closeSug();
 });
-gi.addEventListener('blur',function(){ setTimeout(closeSuggest,120); });
+gi.addEventListener('blur',function(){ setTimeout(closeSug,120); });
 document.addEventListener('keydown',function(e){
   if(e.code==='Space'&&e.target===document.body&&!$('s-game').classList.contains('hidden')&&!S.over){
     e.preventDefault(); playClip(stages()[S.stage].ms);
   }
 });
 
-/* ---------- boot ---------- */
+/* ───────── boot ───────── */
 (function(){
+  if(!CLIENT_ID){
+    $('cidwrap').classList.remove('hidden');
+    $('clede').textContent='This copy has no Client ID baked in, so add your own from the Spotify developer dashboard.';
+    $('rednote').textContent='Register this exact redirect URI on your app: '+HERE;
+  }
   var qs=new URLSearchParams(location.search), code=qs.get('code'), err=qs.get('error');
   if(err){
-    history.replaceState({},'',REDIRECT); show('s-connect');
-    status('connect-status','Spotify refused the login: '+err+'. The redirect URI registered on the dashboard has to match the box above exactly, trailing slash and all. Open the troubleshooting section below.','err');
+    history.replaceState({},'',HERE); show('s-connect');
+    status('cstatus','Spotify declined that sign-in ('+err+').','err');
   }
   if(code){
-    history.replaceState({},'',REDIRECT); show('s-connect');
-    status('connect-status','Finishing sign-in\u2026','wait');
-    exchange(code).then(enterSpotify).catch(function(e){ status('connect-status',e.message,'err'); });
+    history.replaceState({},'',HERE); show('s-connect');
+    status('cstatus','Signing you in\u2026','wait');
+    exchange(code).then(function(){
+      return loadLibrary().then(function(pl){
+        S.playlists=pl; status('cstatus',''); drawLib(); show('s-lib');
+      });
+    }).catch(function(e){ status('cstatus',e.message,'err'); });
     return;
   }
-  Promise.all([memGet('intro:cid'),memGet('intro:refresh'),memGet('intro:cap'),memGet('intro:best'),memGet('intro:redir')]).then(function(r){
-    if(r[0]) $('cid').value=r[0];
-    if(r[4]){ $('redir').value=r[4]; checkRedir(); }
-    if(r[2]&&CAPS.indexOf(r[2])>=0){ S.cap=r[2]; renderCaps(); }
+  Promise.all([mget('intro:cid'),mget('intro:rt'),mget('intro:cap'),mget('intro:best'),
+               mget('intro:vol'),mget('intro:rnd')]).then(function(r){
+    if(!CLIENT_ID&&r[0]) $('cid').value=r[0];
+    if(r[1]&&r[1].t&&r[1].cid){ S.clientId=r[1].cid; S.refresh=r[1].t; }
+    if(r[2]&&CAPS.indexOf(r[2])>=0){ S.cap=r[2]; drawCaps(); }
     if(r[3]) S.best=r[3];
-    if(r[1]&&r[1].token&&r[1].cid){ S.clientId=r[1].cid; S.refresh=r[1].token; }
+    if(typeof r[4]==='number'){ S.vol=r[4]; $('vol').value=Math.round(r[4]*100); $('volpct').textContent=Math.round(r[4]*100); }
+    if(r[5]){ S.randomStart=true; $('swrand').classList.add('on'); }
   });
 })();
 
