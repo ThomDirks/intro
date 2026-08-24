@@ -286,10 +286,10 @@ textarea:focus{outline:none;border-color:var(--red)}
     <h1 class="page">Where are<br>the songs from?</h1>
     <p class="lede">Guess tracks from a couple of seconds of audio. Play alone or pass the phone around.</p>
     <button class="big" id="go-spotify">
-      <span class="row"><span><h2>My Spotify library</h2><p>Sign in and pick any playlist you own.</p></span><span class="arw">&rarr;</span></span>
+      <span class="row"><span><h2>My Spotify library</h2><p>Sign in and pick a playlist you own. Needs an account on the app allowlist.</p></span><span class="arw">&rarr;</span></span>
     </button>
     <button class="big" id="go-paste">
-      <span class="row"><span><h2>A pasted list</h2><p>Plain text or a CSV export. No account needed.</p></span><span class="arw">&rarr;</span></span>
+      <span class="row"><span><h2>A pasted list</h2><p>Plain text or a CSV export. Works for anyone, no setup.</p></span><span class="arw">&rarr;</span></span>
     </button>
   </section>
 
@@ -300,6 +300,14 @@ textarea:focus{outline:none;border-color:var(--red)}
     <textarea id="ptext" spellcheck="false" placeholder="Fleetwood Mac - Dreams&#10;Talking Heads - Once in a Lifetime&#10;Sade - Smooth Operator"></textarea>
     <button class="btn btn-red btn-wide" id="pgo" style="margin-top:14px">Use this list</button>
     <div class="status" id="pstatus"></div>
+    <div class="note">
+      Turning a Spotify playlist into text takes one step and no developer account.
+      <a href="https://www.chosic.com/spotify-playlist-exporter/" target="_blank" rel="noopener">Chosic</a>
+      converts a public playlist link with no login at all.
+      <a href="https://exportify.app/" target="_blank" rel="noopener">Exportify</a>
+      signs in with Spotify the ordinary way and handles private playlists too.
+      Either output pastes straight in above.
+    </div>
   </section>
 
   <!-- CONNECT -->
@@ -312,6 +320,12 @@ textarea:focus{outline:none;border-color:var(--red)}
       <div class="note" id="rednote"></div>
     </div>
     <button class="btn btn-red btn-wide" id="connect">Continue with Spotify</button>
+    <a class="btn btn-ink btn-wide hidden" id="manual" href="#" style="margin-top:9px">Open Spotify sign-in &rarr;</a>
+    <div class="note hidden" id="framewarn"></div>
+    <div class="rail hidden" id="forgetrow">
+      <span class="st">&nbsp;</span>
+      <button id="forget">Use a different Client ID</button>
+    </div>
     <div class="status" id="cstatus"></div>
   </section>
 
@@ -319,12 +333,17 @@ textarea:focus{outline:none;border-color:var(--red)}
   <section id="s-lib" class="hidden">
     <h1 class="page">Your playlists</h1>
     <p class="lede" id="libcount">&nbsp;</p>
+    <p class="lede" style="margin-top:-20px;font-size:14px">Anything under 5 tracks is greyed out.</p>
     <div class="tools">
       <input type="text" id="pfilter" placeholder="Search" autocomplete="off">
       <button class="btn btn-sm" id="psort">A&ndash;Z</button>
     </div>
     <div class="list" id="plist"></div>
     <div class="status" id="lstatus"></div>
+    <div class="rail">
+      <span class="st" id="whoami">&nbsp;</span>
+      <button id="signout">Sign out</button>
+    </div>
     <div class="field" style="margin-top:18px">
       <label class="eyebrow" for="plink">Not listed? Paste its link</label>
       <div class="tools">
@@ -470,9 +489,19 @@ textarea:focus{outline:none;border-color:var(--red)}
    User Management, by name and Spotify email. Anyone not on that
    list can sign in but every request comes back 403.
 
+   A Client ID is a public identifier, not a secret. PKCE exists so
+   browser apps can authenticate without one, which is why there is
+   no client secret anywhere in this file. Anyone reading the source
+   can see the ID and that is expected: without your registered
+   redirect URI and a place on your allowlist, it gets them nothing.
+
    Leave it empty and the app asks each visitor for their own ID.
    ══════════════════════════════════════════════════════════════ */
 var CLIENT_ID = '';
+
+/* Where copied results point people. Leave empty to use whatever
+   address the page is actually being served from. */
+var SITE_URL = 'https://thomdirks.github.io/intro/';
 
 var $=function(i){ return document.getElementById(i); };
 var HERE=location.origin+location.pathname;
@@ -482,7 +511,7 @@ var LADDER=[
   {ms:100,label:'0.1s',pts:6},{ms:1000,label:'1s',pts:5},{ms:2000,label:'2s',pts:4},
   {ms:5000,label:'5s',pts:3},{ms:10000,label:'10s',pts:2},{ms:15000,label:'15s',pts:1}
 ];
-var MAX_PTS=6, CAPS=[1000,2000,5000,10000,15000], EACH=[3,5,10];
+var MAX_PTS=6, CAPS=[1000,2000,5000,10000,15000], EACH=[3,5,10], MIN_TRACKS=5;
 var COL=['#D6402A','#2D6BE0','#E5A50A','#3E8E52','#8A4FD1','#1E9B96','#D2547E','#7A6A55'];
 
 var S={
@@ -490,7 +519,7 @@ var S={
   playlists:[], sort:'az', sourceName:'', tracks:[],
   mode:'endless', cap:15000, knockout:true, randomStart:false, seats:2, each:5,
   players:[], round:0, seat:0, order:[],
-  current:null, stage:0, guesses:[], over:false, offset:0, roundStart:0,
+  current:null, stage:0, guesses:[], over:false, offset:0, pending:0, roundStart:0,
   selected:null, hi:-1, filtered:[], best:0, vol:0.8
 };
 function stages(){ return LADDER.filter(function(s){ return s.ms<=S.cap; }); }
@@ -602,13 +631,14 @@ function loadClip(url){
 }
 function playClip(ms){
   if(AU.playing){ stopClip(); return; }
-  var el=AU.el;
-  AU.limit=ms; AU.playing=true; setPlay(true);
-  try{ el.currentTime=S.offset; }catch(e){}
+  var el=AU.el, from=Math.min(S.pending||0,ms);
+  AU.limit=ms; AU.from=from; AU.playing=true; setPlay(true);
+  try{ el.currentTime=S.offset+from/1000; }catch(e){}
   var go=function(){
     el.removeEventListener('playing',go);
+    S.pending=0; drawStage();
     AU.t0=performance.now();
-    AU.timer=setTimeout(stopClip,ms);
+    AU.timer=setTimeout(stopClip,ms-from);
     loop();
   };
   el.addEventListener('playing',go);
@@ -620,7 +650,7 @@ function playClip(ms){
   });
 }
 function loop(){
-  var pct=Math.min(1,(performance.now()-AU.t0)/AU.limit);
+  var pct=Math.min(1,((AU.from||0)+(performance.now()-AU.t0))/AU.limit);
   setRing(pct);
   if(pct<1) AU.raf=requestAnimationFrame(loop);
 }
@@ -638,16 +668,31 @@ function rand(n){ var a=new Uint8Array(n); crypto.getRandomValues(a);
 function b64(buf){ var s='',b=new Uint8Array(buf); for(var i=0;i<b.length;i++) s+=String.fromCharCode(b[i]);
   return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
 
+var framed=(function(){ try{ return window.self!==window.top; }catch(e){ return true; } })();
+
 function login(){
   var cid=S.clientId||$('cid').value.trim();
   if(!cid){ status('cstatus','Enter a Client ID to continue.','err'); return; }
+  if(!window.crypto||!window.crypto.subtle){
+    status('cstatus','This page cannot run the sign-in crypto. That needs a secure context, so open the site over https or at 127.0.0.1 rather than from a file or a preview pane.','err');
+    return;
+  }
   S.clientId=cid;
   var v=rand(48); ses('iv',v); ses('ic',cid); mset('intro:cid',cid);
-  status('cstatus','Redirecting to Spotify\u2026','wait');
+  status('cstatus','Opening Spotify\u2026','wait');
   crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)).then(b64).then(function(ch){
-    location.href='https://accounts.spotify.com/authorize?'+new URLSearchParams({
+    var url='https://accounts.spotify.com/authorize?'+new URLSearchParams({
       client_id:cid,response_type:'code',redirect_uri:HERE,
       code_challenge_method:'S256',code_challenge:ch,scope:SCOPES}).toString();
+    var a=$('manual'); a.href=url; a.classList.remove('hidden');
+    if(framed){
+      status('cstatus','This page is inside a frame, which blocks the automatic jump. Use the button below, or open the site in its own tab.','err');
+      return;
+    }
+    status('cstatus','Opening Spotify\u2026 use the button below if nothing happens.','wait');
+    try{ window.location.assign(url); }catch(e){ status('cstatus','Could not open Spotify automatically. Use the button below.','err'); }
+  }).catch(function(e){
+    status('cstatus','Sign-in could not start: '+(e&&e.message?e.message:e),'err');
   });
 }
 function readTok(r){
@@ -781,19 +826,21 @@ function drawLib(){
   $('libcount').textContent=S.playlists.length+' playlist'+(S.playlists.length===1?'':'s')+' on your account.';
   if(!arr.length){ L.innerHTML='<div class="li dim"><span class="nm">Nothing matches</span></div>'; return; }
   arr.forEach(function(p){
-    var b=document.createElement('button'); b.className='li';
+    var thin=(typeof p.total==='number'&&p.total<MIN_TRACKS);
+    var b=document.createElement('button'); b.className='li'+(thin?' dim':'');
     var n=document.createElement('span'); n.className='nm'; n.textContent=p.name;
     var c=document.createElement('span'); c.className='ct';
     c.textContent=(p.total===null||p.total===undefined)?'open':(p.total+' tracks');
     b.appendChild(n); b.appendChild(c);
-    b.addEventListener('click',function(){ openPlaylist(p.id,p.name); });
+    if(thin) b.disabled=true;
+    else b.addEventListener('click',function(){ openPlaylist(p.id,p.name); });
     L.appendChild(b);
   });
 }
 function openPlaylist(id,name){
   status('lstatus','Loading '+name+'\u2026','wait');
   loadTracks(id).then(function(ts){
-    if(ts.length<10) throw new Error(name+' only has '+ts.length+' usable tracks. Ten is the minimum.');
+    if(ts.length<MIN_TRACKS) throw new Error(name+' only has '+ts.length+' usable tracks. '+MIN_TRACKS+' is the minimum.');
     status('lstatus','');
     useSource(name,ts,'spotify');
   }).catch(function(e){ status('lstatus',e.message,'err'); });
@@ -855,7 +902,7 @@ function songsEach(){ return S.mode==='endless'?Infinity:(S.mode==='ten'?10:(S.m
 function startRun(){
   var n=S.mode==='party'?S.seats:1;
   var each=songsEach();
-  var need=S.mode==='endless'?10:Math.max(10,n*each);
+  var need=S.mode==='endless'?MIN_TRACKS:Math.max(MIN_TRACKS,n*each);
   if(S.tracks.length<need){
     status('sstatus','This needs '+need+' tracks and the list has '+S.tracks.length+'.','err'); return;
   }
@@ -914,7 +961,7 @@ function startRound(track,att){
   stopClip(); note('');
   var p=cur();
   S.current=track||(S.mode==='endless'?(p.queue.length?p.queue.shift():(p.queue=shuffle(p.pool)).shift()):p.queue[S.round]);
-  S.stage=0; S.guesses=[]; S.over=false; S.selected=null; S.offset=0;
+  S.stage=0; S.guesses=[]; S.over=false; S.selected=null; S.offset=0; S.pending=0;
   $('guess').value=''; $('submit').disabled=true;
   $('reveal').classList.add('hidden');
   $('inputarea').classList.remove('hidden');
@@ -962,7 +1009,9 @@ function startRound(track,att){
 function drawStage(){
   var st=stages(), c=st[S.stage];
   $('clip').textContent=c.label;
-  $('worth').textContent='worth '+c.pts+' point'+(c.pts===1?'':'s')+' right now';
+  $('worth').textContent=S.pending
+    ? ('picks up from '+(S.pending/1000)+'s \u00B7 worth '+c.pts+' point'+(c.pts===1?'':'s'))
+    : ('worth '+c.pts+' point'+(c.pts===1?'':'s')+' right now');
   var b=$('pills'); b.innerHTML='';
   st.forEach(function(s,i){
     var e=document.createElement('span');
@@ -1046,9 +1095,13 @@ function submit(){
 }
 function advance(e){
   stopClip();
+  var heard=stages()[S.stage].ms;
   S.guesses.push(e);
   if(S.guesses.length>=stages().length){ endRound(false); return; }
   S.stage++;
+  /* After a skip the next press picks up where the clip was cut off.
+     Playing again after that goes back to the beginning. */
+  S.pending=(e.type==='skip')?heard:0;
   drawStage(); drawAtts(); drawHead();
   $('guess').value=''; S.selected=null; $('submit').disabled=true;
   closeSug(); $('guess').focus();
@@ -1133,14 +1186,18 @@ function summary(){
   show('s-sum');
 }
 function sumText(){
-  var head='Intro \u00B7 '+S.sourceName+'\n';
-  if(S.players.length>1) return head+S.players.map(function(p){
-    return p.name+' '+totalPts(p)+' pts'+(p.out?' (out)':'')+'\n'+
+  var head='Intro. \u00B7 '+S.sourceName+'\n', body;
+  if(S.players.length>1){
+    body=S.players.map(function(p){
+      return p.name+' '+totalPts(p)+' pts'+(p.out?' (out)':'')+'\n'+
+        p.results.map(function(r){ return squares(r.guesses); }).join('\n');
+    }).join('\n\n');
+  } else {
+    var p=S.players[0];
+    body=totalPts(p)+'/'+(p.results.length*MAX_PTS)+' \u00B7 '+fmt(p.ms)+'\n'+
       p.results.map(function(r){ return squares(r.guesses); }).join('\n');
-  }).join('\n\n');
-  var p=S.players[0];
-  return head+totalPts(p)+'/'+(p.results.length*MAX_PTS)+' \u00B7 '+fmt(p.ms)+'\n'+
-    p.results.map(function(r){ return squares(r.guesses); }).join('\n');
+  }
+  return head+body+'\nPlay on '+(SITE_URL||HERE);
 }
 
 /* ───────── wiring ───────── */
@@ -1151,11 +1208,28 @@ $('go-spotify').addEventListener('click',function(){ show(S.token?'s-lib':'s-con
 $('go-paste').addEventListener('click',function(){ show('s-paste'); });
 $('pgo').addEventListener('click',function(){
   var t=parseSongs($('ptext').value);
-  if(t.length<10){ status('pstatus','Found '+t.length+' songs. Ten is the minimum.','err'); return; }
+  if(t.length<MIN_TRACKS){ status('pstatus','Found '+t.length+' songs. '+MIN_TRACKS+' is the minimum.','err'); return; }
   status('pstatus',''); useSource('Your list',t,'paste');
 });
 $('connect').addEventListener('click',login);
 $('cid').addEventListener('keydown',function(e){ if(e.key==='Enter') login(); });
+function signOut(forgetId){
+  stopClip();
+  S.token=''; S.refresh=''; S.tokenExp=0; S.meId=''; S.meName='';
+  S.playlists=[]; S.tracks=[];
+  mset('intro:rt',null);
+  if(forgetId){ S.clientId=CLIENT_ID; mset('intro:cid',null); if(!CLIENT_ID) $('cid').value=''; }
+  status('cstatus',''); status('lstatus','');
+  drawForget();
+  show('s-connect');
+}
+function drawForget(){
+  var saved=!CLIENT_ID&&$('cid').value.trim();
+  $('forgetrow').classList.toggle('hidden',!saved);
+}
+$('signout').addEventListener('click',function(){ signOut(false); });
+$('forget').addEventListener('click',function(){ signOut(true); });
+$('cid').addEventListener('input',drawForget);
 $('pfilter').addEventListener('input',drawLib);
 $('psort').addEventListener('click',function(){
   S.sort=S.sort==='az'?'size':'az';
@@ -1235,9 +1309,13 @@ document.addEventListener('keydown',function(e){
 
 /* ───────── boot ───────── */
 (function(){
+  if(framed){
+    $('framewarn').classList.remove('hidden');
+    $('framewarn').textContent='Spotify sign-in cannot complete inside a preview pane, because the redirect has to land back on the real site address. Open '+HERE+' in its own tab.';
+  }
   if(!CLIENT_ID){
     $('cidwrap').classList.remove('hidden');
-    $('clede').textContent='Currently only available in Developer Mode, use your Spotify Client ID from your developer dashboard.';
+    $('clede').textContent='This copy has no Client ID baked in, so add your own from the Spotify developer dashboard.';
     $('rednote').textContent='Register this exact redirect URI on your app: '+HERE;
   }
   var qs=new URLSearchParams(location.search), code=qs.get('code'), err=qs.get('error');
@@ -1250,14 +1328,16 @@ document.addEventListener('keydown',function(e){
     status('cstatus','Signing you in\u2026','wait');
     exchange(code).then(function(){
       return loadLibrary().then(function(pl){
-        S.playlists=pl; status('cstatus',''); drawLib(); show('s-lib');
+        S.playlists=pl; status('cstatus','');
+        $('whoami').textContent='Signed in as '+S.meName;
+        drawLib(); show('s-lib');
       });
     }).catch(function(e){ status('cstatus',e.message,'err'); });
     return;
   }
   Promise.all([mget('intro:cid'),mget('intro:rt'),mget('intro:cap'),mget('intro:best'),
                mget('intro:vol'),mget('intro:rnd')]).then(function(r){
-    if(!CLIENT_ID&&r[0]) $('cid').value=r[0];
+    if(!CLIENT_ID&&r[0]){ $('cid').value=r[0]; drawForget(); }
     if(r[1]&&r[1].t&&r[1].cid){ S.clientId=r[1].cid; S.refresh=r[1].t; }
     if(r[2]&&CAPS.indexOf(r[2])>=0){ S.cap=r[2]; drawCaps(); }
     if(r[3]) S.best=r[3];
