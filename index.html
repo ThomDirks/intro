@@ -1237,7 +1237,7 @@ document.addEventListener('keydown',function(e){
 (function(){
   if(!CLIENT_ID){
     $('cidwrap').classList.remove('hidden');
-    $('clede').textContent='This copy has no Client ID baked in, so add your own from the Spotify developer dashboard.';
+    $('clede').textContent='Currently only available in Developer Mode, use your Spotify Client ID from your developer dashboard.';
     $('rednote').textContent='Register this exact redirect URI on your app: '+HERE;
   }
   var qs=new URLSearchParams(location.search), code=qs.get('code'), err=qs.get('error');
